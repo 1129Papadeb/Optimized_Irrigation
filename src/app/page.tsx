@@ -32,7 +32,7 @@ const SmartIrrigationSystem: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      if (apiKey === '9d975c83479d0aa03e51d4e329d1a0d7' || !apiKey) {
+      if (apiKey === 'YOUR_DEFAULT_API_KEY_HERE' || !apiKey) {
         setError('OpenWeather API Key is not configured. Using default weather values.');
         setRainChance(30); // Fallback to default
         setWeatherData(null);
@@ -914,7 +914,7 @@ const SmartIrrigationSystem: React.FC = () => {
             fontSize: '0.9rem'
           }}>
             <p> This system integrates environmental data with plant health metrics to provide informed irrigation recommendations. Always combine automated insights with careful manual observation.</p>
-            <p> Remember: It's often safer to underwater slightly than to overwater, as it's easier to add water than to remove excess!</p>
+            <p> Remember: It&apos;s often safer to underwater slightly than to overwater, as it&apos;s easier to add water than to remove excess!</p>
           </div>
         </div>
       </div>
