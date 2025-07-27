@@ -1012,7 +1012,6 @@ const SmartIrrigationSystem: React.FC = () => {
             color: '#ffffffff',
             fontSize: '0.9rem'
           }}>
-            <p> This system integrates environmental data with plant health metrics to provide informed irrigation recommendations. Always combine automated insights with careful manual observation.</p>
             <p> Remember: It&apos;s often safer to underwater slightly than to overwater, as it&apos;s easier to add water than to remove excess!</p>
           </div>
         </div>
