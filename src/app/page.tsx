@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { assessPlantHealth, calculateRecentIrrigationScore } from '@/utils/plantHealth';
 import { calculateIrrigation } from '@/utils/irrigation';
 import { getForecastRainChance } from '@/utils/weather';
-import type { PlantHealthData, IrrigationResult } from '@/types/index';
+import type {ProcessedWeatherData, PlantHealthData, IrrigationResult } from '@/types/index';
 
 const SmartIrrigationSystem: React.FC = () => {
   // Form states
@@ -20,7 +20,7 @@ const SmartIrrigationSystem: React.FC = () => {
   const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || '9d975c83479d0aa03e51d4e329d1a0d7';
 
   // Results states
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherData, setWeatherData] = useState<ProcessedWeatherData | null>(null);
   const [rainChance, setRainChance] = useState<number>(30);
   const [plantHealth, setPlantHealth] = useState<PlantHealthData | null>(null);
   const [irrigationResult, setIrrigationResult] = useState<IrrigationResult | null>(null);
