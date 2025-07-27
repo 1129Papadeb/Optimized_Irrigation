@@ -720,7 +720,7 @@ const SmartIrrigationSystem: React.FC = () => {
 
       <div className="main-card">
         <div className="header">
-          <h1>🌿 Smart Irrigation System</h1>
+          <h1>Smart Irrigation System</h1>
         </div>
 
         <div className="content">
