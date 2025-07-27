@@ -106,512 +106,611 @@ const SmartIrrigationSystem: React.FC = () => {
     <div className="irrigation-container">
       <style jsx>{`
         /* Root container for the entire page */
-        .irrigation-container {
-          min-height: 100vh;
-          /* Deeper green for a more earthy, agriculture feel */
-          background-image:#ffffff;
-          padding: 20px;
-          font-family: 'Inter', sans-serif;
-          color: #333; /* Darker text for readability */
-          display: flex;
-          justify-content: center;
-          align-items: flex-start; /* Align to top to prevent large empty space at bottom */
-        }
+.irrigation-container {
+  min-height: 100vh;
+  background-image: #ffffff;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
 
-        /* Main card holding all content */
-        .main-card {
-          max-width: 1400px;
-          width: 100%;
-          margin: 20px auto;
-          /* Slightly adjusted gradient for a richer green */
-          background: linear-gradient(135deg, #A2E0AD 10%, #3CB371 100%); /* Lighter to Medium Sea Green */
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); /* Stronger shadow for depth */
-          overflow: hidden;
-          backdrop-filter: blur(15px); /* Maintain subtle blur effect */
-          border: 1px solid rgba(255, 255, 255, 0.4); /* Slightly more prominent border */
-          border-radius: 25px; /* More rounded corners for a softer look */
-        }
+/* Main card holding all content */
+.main-card {
+  max-width: 1400px;
+  width: 100%;
+  margin: 20px auto;
+  background: linear-gradient(135deg, #A2E0AD 10%, #3CB371 100%);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 25px;
+}
 
-        /* Header section with title and description */
-        .header {
-          /* Richer green gradient for a prominent header */
-          background: linear-gradient(135deg, #3CB371 0%, #2E8B57 100%); /* Medium Sea Green to Sea Green */
-          padding: 40px;
-          text-align: center;
-          color: white;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* Slightly more opaque border */
-        }
+/* Header section with title and description */
+.header {
+  background: linear-gradient(135deg, #3CB371 0%, #2E8B57 100%);
+  padding: 40px;
+  text-align: center;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
 
-        .header h1 {
-          margin: 0;
-          font-size: 3.2rem; /* Slightly larger heading */
-          font-weight: 800;
-          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced text shadow */
-          letter-spacing: -1.5px; /* Tighter letter spacing for larger font */
-        }
+.header h1 {
+  margin: 0;
+  font-size: 3.2rem;
+  font-weight: 800;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: -1.5px;
+}
 
-        .header p {
-          margin: 15px 0 0;
-          font-size: 1.25rem; /* Slightly larger paragraph */
-          opacity: 0.98; /* Almost fully opaque */
-          max-width: 650px; /* Wider content for description */
-          margin-left: auto;
-          margin-right: auto;
-        }
+.header p {
+  margin: 15px 0 0;
+  font-size: 1.25rem;
+  opacity: 0.98;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-        /* Main content area */
-        .content {
-          padding: 50px;
-        }
+/* Main content area */
+.content {
+  padding: 50px;
+}
 
-        /* Grid for form sections */
-        .form-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          gap: 40px; /* Increased gap for better spacing */
-          margin-bottom: 50px; /* More space before button */
-        }
+/* Grid for form sections */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  margin-bottom: 50px;
+}
 
-        /* Individual form section card */
-        .form-section {
-          background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-          padding: 35px; /* Increased padding */
-          border-radius: 20px;
-          border: 1px solid #e0e0e0; /* Neutral border */
-          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07); /* Slightly stronger shadow */
-          transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Add shadow to transition */
-        }
-        
-        .form-section:hover {
-          transform: translateY(-7px); /* More pronounced hover effect */
-          box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12); /* Larger shadow on hover */
-        }
+/* Individual form section card */
+.form-section {
+  background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+  padding: 35px;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
 
-        .form-section h3 {
-          margin: 0 0 28px; /* More space below heading */
-          color: #212121;
-          font-size: 1.7rem; /* Slightly larger heading */
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          /* Green accent border for headings */
-          border-bottom: 2px solid #D4EDDA; /* Light green for agricultural theme */
-          padding-bottom: 15px;
-        }
+.form-section:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
+}
 
-        .input-group {
-          margin-bottom: 30px; /* More space between input groups */
-        }
+.form-section h3 {
+  margin: 0 0 28px;
+  color: #212121;
+  font-size: 1.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #D4EDDA;
+  padding-bottom: 15px;
+}
 
-        .input-group label {
-          display: block;
-          margin-bottom: 12px; /* More space below label */
-          color: #424242;
-          font-weight: 600;
-          font-size: 1.05rem; /* Slightly larger label font */
-        }
+.input-group {
+  margin-bottom: 30px;
+}
 
-        .input-group input,
-        .input-group select {
-          width: 100%;
-          padding: 15px 20px; /* More padding for inputs */
-          border: 2px solid #d0d0d0; /* Slightly darker neutral border */
-          border-radius: 12px;
-          font-size: 1.1rem; /* Slightly larger input font */
-          transition: all 0.3s ease;
-          box-sizing: border-box;
-          background-color: #ffffff;
-          color: #333;
-        }
+.input-group label {
+  display: block;
+  margin-bottom: 12px;
+  color: #424242;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
 
-        .input-group input:focus,
-        .input-group select:focus {
-          outline: none;
-          border-color: #4CAF50;
-          box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.2); /* Larger focus shadow */
-        }
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #d0d0d0;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #333;
+}
 
-        .range-info {
-          font-size: 0.95rem; /* Slightly larger info text */
-          color: #757575;
-          margin-top: 10px; /* More space above info */
-          padding-left: 5px;
-        }
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.2);
+}
 
-        .weather-section {
-          display: flex;
-          align-items: center;
-          gap: 25px; /* Increased gap */
-          margin-top: 25px; /* More space above weather section */
-        }
+.range-info {
+  font-size: 0.95rem;
+  color: #757575;
+  margin-top: 10px;
+  padding-left: 5px;
+}
 
-        .weather-button {
-          background: linear-gradient(135deg, #2196F3, #1976D2); /* Blue gradient for weather */
-          color: white;
-          border: none;
-          padding: 15px 30px; /* More padding */
-          border-radius: 12px;
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 1.05rem; /* Slightly larger font */
-          transition: all 0.3s ease;
-          box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4); /* Stronger shadow */
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
+.weather-section {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-top: 25px;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  justify-content: flex-start; /* Align items to start */
+}
 
-        .weather-button:hover {
-          transform: translateY(-4px); /* More pronounced hover */
-          box-shadow: 0 10px 30px rgba(33, 150, 243, 0.5); /* Larger shadow on hover */
-        }
+.weather-section > span {
+  flex-shrink: 0; /* Prevent the text from shrinking */
+}
 
-        .weather-button:disabled {
-          opacity: 0.6; /* Slightly more opaque disabled state */
-          cursor: not-allowed;
-          transform: none;
-          box-shadow: none;
-        }
+.weather-button {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-        /* Calculate button */
-        .calculate-button {
-          width: 100%;
-          /* Strong, vibrant green gradient for the main action */
-          background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Green to Dark Green */
-          color: white;
-          border: none;
-          padding: 22px 28px; /* More padding for a bigger button */
-          border-radius: 15px;
-          font-size: 1.4rem; /* Larger font size */
-          font-weight: 700;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4); /* Stronger shadow */
-          margin: 50px 0; /* More margin */
-          letter-spacing: 0.7px; /* More letter spacing */
-        }
+.weather-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(33, 150, 243, 0.5);
+}
 
-        .calculate-button:hover {
-          transform: translateY(-5px); /* More pronounced hover */
-          box-shadow: 0 15px 40px rgba(76, 175, 80, 0.5); /* Larger shadow on hover */
-        }
+.weather-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
 
-        /* Grid for results */
-        .results-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-          gap: 35px; /* Increased gap */
-          margin-top: 50px; /* More space above results */
-        }
+/* Calculate button */
+.calculate-button {
+  width: 100%;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  border: none;
+  padding: 22px 28px;
+  border-radius: 15px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
+  margin: 50px 0;
+  letter-spacing: 0.7px;
+}
 
-        /* Individual result card */
-        .result-card {
-          background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-          border-radius: 20px;
-          padding: 35px; /* Increased padding */
-          box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1); /* Stronger shadow */
-          border: 1px solid #e0e0e0;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-        }
+.calculate-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(76, 175, 80, 0.5);
+}
 
-        .result-card h4 {
-          margin: 0 0 28px; /* More space below heading */
-          color: #212121;
-          font-size: 1.9rem; /* Larger heading */
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          border-bottom: 2px solid #f0f0f0; /* Neutral border for results headings */
-          padding-bottom: 15px;
-        }
+/* Grid for results */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 35px;
+  margin-top: 50px;
+}
 
-        .metric {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 18px 0; /* More padding */
-          border-bottom: 1px solid #f5f5f5;
-        }
+/* Individual result card */
+.result-card {
+  background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-        .metric:last-child {
-          border-bottom: none;
-        }
+.result-card h4 {
+  margin: 0 0 28px;
+  color: #212121;
+  font-size: 1.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
 
-        .metric-label {
-          color: #616161;
-          font-weight: 500;
-          font-size: 1.1rem; /* Slightly larger label */
-        }
+.metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
 
-        .metric-value {
-          font-weight: 700;
-          color: #333;
-          font-size: 1.15rem; /* Slightly larger value */
-        }
+.metric:last-child {
+  border-bottom: none;
+}
 
-        .status-badge {
-          padding: 9px 18px; /* More padding */
-          border-radius: 25px;
-          font-size: 1rem; /* Slightly larger font */
-          font-weight: 600;
-          color: white;
-          text-transform: uppercase;
-          letter-spacing: 0.7px; /* More letter spacing */
-        }
+.metric-label {
+  color: #616161;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
 
-        /* Irrigation level display */
-        .irrigation-level {
-          text-align: center;
-          padding: 35px; /* More padding */
-          margin: 25px 0; /* More margin */
-          border-radius: 20px; /* More rounded corners */
-          /* Blue gradient for water-related sections */
-          background: linear-gradient(135deg, #E3F2FD, #3a92beff); /* Lighter to medium blue */
-          border: 2px dashed #90CAF9;
-          box-shadow: inset 0 0 18px rgba(0, 150, 136, 0.08); /* Stronger inset shadow */
-        }
+.metric-value {
+  font-weight: 700;
+  color: #333;
+  font-size: 1.15rem;
+}
 
-        .irrigation-level h3 {
-          margin: 0 0 18px; /* More space below heading */
-          font-size: 2.4rem; /* Larger heading */
-          color: #1565C0;
-          font-weight: 800;
-        }
+.status-badge {
+  padding: 9px 18px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
 
-        .irrigation-percentage {
-          font-size: 4.2rem; /* Even larger percentage font */
-          font-weight: 900;
-          color: #0D47A1;
-          margin: 18px 0; /* More margin */
-          text-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Stronger text shadow */
-        }
+/* Irrigation level display */
+.irrigation-level {
+  text-align: center;
+  padding: 35px;
+  margin: 25px 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #E3F2FD, #3a92beff);
+  border: 2px dashed #90CAF9;
+  box-shadow: inset 0 0 18px rgba(0, 150, 136, 0.08);
+}
 
-        /* Health issues section */
-        .health-issues {
-          margin-top: 30px; /* More space above */
-          background: #FFF0F0; /* Slightly lighter red background */
-          border-left: 6px solid #EF5350; /* Thicker red border */
-          padding: 18px 25px; /* More padding */
-          border-radius: 10px; /* Slightly more rounded */
-        }
+.irrigation-level h3 {
+  margin: 0 0 18px;
+  font-size: 2.4rem;
+  color: #1565C0;
+  font-weight: 800;
+}
 
-        .health-issues strong {
-          color: #D32F2F;
-          font-size: 1.1rem; /* Slightly larger strong text */
-          display: block;
-          margin-bottom: 12px; /* More space below strong text */
-        }
+.irrigation-percentage {
+  font-size: 4.2rem;
+  font-weight: 900;
+  color: #0D47A1;
+  margin: 18px 0;
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
 
-        .health-issues ul {
-          margin: 0;
-          padding-left: 28px; /* More padding */
-          list-style-type: '🚨 ';
-        }
+/* Health issues section */
+.health-issues {
+  margin-top: 30px;
+  background: #FFF0F0;
+  border-left: 6px solid #EF5350;
+  padding: 18px 25px;
+  border-radius: 10px;
+}
 
-        .health-issues li {
-          color: #C62828;
-          margin-bottom: 10px; /* More space between list items */
-          font-size: 1rem; /* Slightly larger font */
-        }
+.health-issues strong {
+  color: #D32F2F;
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 12px;
+}
 
-        /* Recommendations section */
-        .recommendations {
-          background: #FFFCE6; /* Slightly lighter yellow background */
-          border-left: 6px solid #FFD740; /* Thicker yellow border */
-          border-radius: 10px;
-          padding: 22px; /* More padding */
-          margin-top: 35px; /* More space above */
-        }
+.health-issues ul {
+  margin: 0;
+  padding-left: 28px;
+  list-style-type: '🚨 ';
+}
 
-        .recommendations h5 {
-          margin: 0 0 18px; /* More space below heading */
-          color: #FBC02D;
-          font-size: 1.25rem; /* Slightly larger heading */
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
+.health-issues li {
+  color: #C62828;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
 
-        .recommendations ul {
-          margin: 0;
-          padding-left: 28px; /* More padding */
-          list-style-type: '✅ ';
-        }
+/* Recommendations section */
+.recommendations {
+  background: #FFFCE6;
+  border-left: 6px solid #FFD740;
+  border-radius: 10px;
+  padding: 22px;
+  margin-top: 35px;
+}
 
-        .recommendations li {
-          color: #F9A825;
-          margin-bottom: 10px; /* More space between list items */
-          font-size: 1rem; /* Slightly larger font */
-        }
+.recommendations h5 {
+  margin: 0 0 18px;
+  color: #FBC02D;
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-        /* Weather info display */
-        .weather-info {
-          background: linear-gradient(135deg, #E8F5FF, #D0EEFF); /* Lighter blue gradient */
-          border-radius: 12px;
-          padding: 22px; /* More padding */
-          margin-top: 25px; /* More space above */
-          border: 1px solid #A7D9F8; /* Slightly darker blue border */
-          box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.06); /* Stronger inset shadow */
-        }
+.recommendations ul {
+  margin: 0;
+  padding-left: 28px;
+  list-style-type: '✅ ';
+}
 
-        .weather-info p {
-          margin: 10px 0; /* More space between paragraphs */
-          color: #1565C0;
-          font-size: 1rem; /* Slightly larger font */
-        }
+.recommendations li {
+  color: #F9A825;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
 
-        /* Safety message styling */
-        .safety-message {
-          padding: 25px; /* More padding */
-          border-radius: 18px; /* More rounded corners */
-          margin: 30px 0; /* More margin */
-          font-weight: 700;
-          font-size: 1.15rem; /* Slightly larger font */
-          text-align: center;
-          line-height: 1.6; /* Increased line height for readability */
-        }
+/* Weather info display */
+.weather-info {
+  background: linear-gradient(135deg, #E8F5FF, #D0EEFF);
+  border-radius: 12px;
+  padding: 22px;
+  margin-top: 25px;
+  border: 1px solid #A7D9F8;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.06);
+}
 
-        .safety-message.safe {
-          background: #E8F5E9; /* Light Green */
-          border: 1px solid #4CAF50;
-          color: #2E7D32;
-        }
+.weather-info p {
+  margin: 10px 0;
+  color: #1565C0;
+  font-size: 1rem;
+}
 
-        .safety-message.warning {
-          background: #FFFCE6; /* Light Amber */
-          border: 1px solid #FFC107;
-          color: #FF8F00;
-        }
+/* Safety message styling */
+.safety-message {
+  padding: 25px;
+  border-radius: 18px;
+  margin: 30px 0;
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-align: center;
+  line-height: 1.6;
+}
 
-        .safety-message.danger {
-          background: #FFF0F0; /* Light Red */
-          border: 1px solid #EF5350;
-          color: #D32F2F;
-        }
+.safety-message.safe {
+  background: #E8F5E9;
+  border: 1px solid #4CAF50;
+  color: #2E7D32;
+}
 
-        /* Error message styling */
-        .error-message {
-          background: #FFF0F0; /* Consistent with danger background */
-          border: 1px solid #EF5350;
-          color: #C62828;
-          padding: 20px; /* More padding */
-          border-radius: 12px;
-          margin: 30px 0; /* More margin */
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 12px; /* Increased gap */
-          font-size: 1rem; /* Slightly larger font */
-        }
+.safety-message.warning {
+  background: #FFFCE6;
+  border: 1px solid #FFC107;
+  color: #FF8F00;
+}
 
-        /* Loading indicator */
-        .loading {
-          display: flex;
-          align-items: center;
-          gap: 12px; /* Increased gap */
-          color: #616161;
-          font-size: 1rem; /* Slightly larger font */
-        }
+.safety-message.danger {
+  background: #FFF0F0;
+  border: 1px solid #EF5350;
+  color: #D32F2F;
+}
 
-        .spinner {
-          width: 24px; /* Slightly larger spinner */
-          height: 24px; /* Slightly larger spinner */
-          border: 3px solid #e0e0e0;
-          border-top: 3px solid #2196F3;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
+/* Error message styling */
+.error-message {
+  background: #FFF0F0;
+  border: 1px solid #EF5350;
+  color: #C62828;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 30px 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+}
 
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
+/* Loading indicator */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #616161;
+  font-size: 1rem;
+}
 
-        /* Irrigation history input grid */
-        .irrigation-history {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 25px; /* Increased gap */
-          margin-top: 25px; /* More space above */
-        }
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e0e0e0;
+  border-top: 3px solid #2196F3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
 
-        .history-input {
-          text-align: center;
-        }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
-        .history-input label {
-          font-size: 0.95rem; /* Slightly larger font */
-          color: #757575;
-          margin-bottom: 10px; /* More space below label */
-          display: block;
-        }
+/* Irrigation history input grid */
+.irrigation-history {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-top: 25px;
+}
 
-        /* Responsive adjustments */
-        @media (max-width: 1024px) {
-          .content {
-            padding: 30px;
-          }
-          .form-grid, .results-grid {
-            grid-template-columns: 1fr;
-            gap: 30px; /* Adjusted gap */
-          }
-          .header h1 {
-            font-size: 2.8rem;
-          }
-        }
+.history-input {
+  text-align: center;
+}
 
-        @media (max-width: 768px) {
-          .irrigation-container {
-            padding: 15px;
-          }
-          .main-card {
-            margin: 15px auto;
-            border-radius: 20px; /* Slightly less rounded on small screens */
-          }
-          .header {
-            padding: 30px 20px;
-          }
-          .header h1 {
-            font-size: 2.4rem;
-          }
-          .header p {
-            font-size: 1.1rem;
-          }
-          .content {
-            padding: 25px;
-          }
-          .form-section h3, .result-card h4 {
-            font-size: 1.6rem;
-          }
-          .input-group input, .input-group select {
-            padding: 14px 18px;
-            font-size: 1rem;
-          }
-          .calculate-button {
-            padding: 18px 22px;
-            font-size: 1.2rem;
-          }
-          .irrigation-percentage {
-            font-size: 3.5rem;
-          }
-          .weather-section {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 20px;
-          }
-          .irrigation-history {
-            grid-template-columns: 1fr;
-          }
-          .safety-message {
-            padding: 20px;
-            font-size: 1.05rem;
-          }
-        }
+.history-input label {
+  font-size: 0.95rem;
+  color: #757575;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .main-card {
+    margin: 15px; /* Adjust margin for slightly smaller screens */
+  }
+
+  .content {
+    padding: 40px; /* Slightly reduce padding */
+  }
+
+  .form-grid,
+  .results-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjust minmax for more flexibility */
+    gap: 30px; /* Reduce gap slightly */
+  }
+}
+
+
+@media (max-width: 1024px) {
+  .content {
+    padding: 30px;
+  }
+  .form-grid,
+  .results-grid {
+    grid-template-columns: 1fr; /* Stack columns on tablets/smaller laptops */
+    gap: 30px; /* Adjusted gap */
+  }
+  .header h1 {
+    font-size: 2.8rem;
+  }
+  .weather-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .irrigation-container {
+    padding: 15px;
+  }
+  .main-card {
+    margin: 15px auto;
+    border-radius: 20px;
+  }
+  .header {
+    padding: 30px 20px;
+  }
+  .header h1 {
+    font-size: 2.4rem;
+  }
+  .header p {
+    font-size: 1.1rem;
+  }
+  .content {
+    padding: 25px;
+  }
+  .form-section h3,
+  .result-card h4 {
+    font-size: 1.6rem;
+  }
+  .input-group input,
+  .input-group select {
+    padding: 14px 18px;
+    font-size: 1rem;
+  }
+  .calculate-button {
+    padding: 18px 22px;
+    font-size: 1.2rem;
+  }
+  .irrigation-percentage {
+    font-size: 3.5rem;
+  }
+  .irrigation-history {
+    grid-template-columns: 1fr; /* Stack irrigation history inputs */
+  }
+  .safety-message {
+    padding: 20px;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+  .header p {
+    font-size: 1rem;
+  }
+  .content {
+    padding: 20px;
+  }
+  .form-section, .result-card {
+    padding: 25px; /* Reduce padding on cards for smaller screens */
+  }
+  .form-section h3, .result-card h4 {
+    font-size: 1.4rem;
+    margin-bottom: 20px; /* Adjust spacing */
+  }
+  .input-group label {
+    font-size: 1rem;
+  }
+  .input-group input, .input-group select {
+    font-size: 0.95rem;
+    padding: 12px 15px;
+  }
+  .range-info, .history-input label, .weather-info p {
+    font-size: 0.85rem;
+  }
+  .weather-button {
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    width: 100%; /* Full width button on small screens */
+    justify-content: center; /* Center content in button */
+  }
+  .weather-section span {
+    text-align: center;
+    width: 100%; /* Ensure text takes full width */
+    font-size: 0.95rem;
+  }
+  .calculate-button {
+    font-size: 1.1rem;
+    padding: 15px 20px;
+    margin: 30px 0;
+  }
+  .metric-label, .metric-value {
+    font-size: 1rem;
+  }
+  .status-badge {
+    padding: 7px 14px;
+    font-size: 0.9rem;
+  }
+  .irrigation-level h3 {
+    font-size: 2rem;
+  }
+  .irrigation-percentage {
+    font-size: 3rem;
+  }
+  .health-issues, .recommendations {
+    padding: 15px 20px;
+  }
+  .health-issues strong, .recommendations h5 {
+    font-size: 1rem;
+  }
+  .health-issues ul, .recommendations ul {
+    padding-left: 20px;
+  }
+  .safety-message {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+  .error-message, .loading {
+    font-size: 0.9rem;
+    padding: 15px;
+  }
+}
       `}</style>
 
       <div className="main-card">
