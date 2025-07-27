@@ -554,6 +554,11 @@ const SmartIrrigationSystem: React.FC = () => {
   margin-bottom: 10px;
   display: block;
 }
+  .history-input input {
+  border-radius: 8px; /* Added border-radius */
+  padding: 8px 12px; /* Adjust padding as needed for aesthetics */
+  border: 1px solid #ccc; /* Example border */
+}
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
