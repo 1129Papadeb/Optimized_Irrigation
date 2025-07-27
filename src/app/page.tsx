@@ -95,7 +95,7 @@ const SmartIrrigationSystem: React.FC = () => {
   const getHealthColor = (status: string): string => {
     switch (status) {
       case 'Excellent': return '#4CAF50'; // Green
-      case 'Healthy': return '#8BC34A'; // Light Green
+      case 'Healthy': return '#4CAF50'; // Light Green
       case 'Poor': return '#FFC107'; // Amber
       case 'Critical': return '#F44336'; // Red
       default: return '#9E9E9E'; // Grey
@@ -109,7 +109,7 @@ const SmartIrrigationSystem: React.FC = () => {
         .irrigation-container {
           min-height: 100vh;
           /* Deeper green for a more earthy, agriculture feel */
-          background: linear-gradient( 135deg, #81FBB8 10%, #28C76F 100%);; /* Dark Green */ 
+          background-image:#ffffff;
           padding: 20px;
           font-family: 'Inter', sans-serif;
           color: #333; /* Darker text for readability */
@@ -174,7 +174,7 @@ const SmartIrrigationSystem: React.FC = () => {
 
         /* Individual form section card */
         .form-section {
-          background: #ffffff; /* Pure white background for crispness */
+          background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
           padding: 35px; /* Increased padding */
           border-radius: 20px;
           border: 1px solid #e0e0e0; /* Neutral border */
@@ -307,7 +307,7 @@ const SmartIrrigationSystem: React.FC = () => {
 
         /* Individual result card */
         .result-card {
-          background: #ffffff;
+          background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
           border-radius: 20px;
           padding: 35px; /* Increased padding */
           box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1); /* Stronger shadow */
@@ -370,7 +370,7 @@ const SmartIrrigationSystem: React.FC = () => {
           margin: 25px 0; /* More margin */
           border-radius: 20px; /* More rounded corners */
           /* Blue gradient for water-related sections */
-          background: linear-gradient(135deg, #E3F2FD, #BBE0F3); /* Lighter to medium blue */
+          background: linear-gradient(135deg, #E3F2FD, #3a92beff); /* Lighter to medium blue */
           border: 2px dashed #90CAF9;
           box-shadow: inset 0 0 18px rgba(0, 150, 136, 0.08); /* Stronger inset shadow */
         }
