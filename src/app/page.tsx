@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { assessPlantHealth, calculateRecentIrrigationScore } from '@/utils/plantHealth';
 import { calculateIrrigation } from '@/utils/irrigation';
 import { getForecastRainChance } from '@/utils/weather';
@@ -27,16 +27,12 @@ const SmartIrrigationSystem: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  // Load weather data on component mount
-  useEffect(() => {
-    fetchWeatherData();
-  }, []);
-
-  const fetchWeatherData = async () => {
+  // Memoize fetchWeatherData to fix the useEffect dependency warning
+  const fetchWeatherData = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-      if (apiKey === 'YOUR_DEFAULT_API_KEY_HERE' || !apiKey) {
+      if (apiKey === '9d975c83479d0aa03e51d4e329d1a0d7' || !apiKey) {
         setError('OpenWeather API Key is not configured. Using default weather values.');
         setRainChance(30); // Fallback to default
         setWeatherData(null);
@@ -53,7 +49,12 @@ const SmartIrrigationSystem: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiKey, city]);
+
+  // Load weather data on component mount
+  useEffect(() => {
+    fetchWeatherData();
+  }, [fetchWeatherData]);
 
   const calculateRecommendation = () => {
     // Calculate recent irrigation score
@@ -75,7 +76,6 @@ const SmartIrrigationSystem: React.FC = () => {
     });
     setIrrigationResult(result);
   };
-
   const handleIrrigationHistoryChange = (index: number, value: string) => {
     const newHistory = [...irrigationHistory];
     newHistory[index] = parseFloat(value) || 0;
