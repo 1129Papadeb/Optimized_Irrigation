@@ -59,13 +59,23 @@ export function calculateIrrigation(inputs: {
 
   let estimatedLiters: number;
   if (cropFactor) {
-    const totalPlants = 10; // assume 1 plant/m² over 10 m²
+    // 2 plots, each 900 cm, 100 cm per plant → 9 plants/plot → 18 plants total
+    const plantsPerPlot = 900 / 100; // 9
+    const plots = 2;
+    const totalPlants = plantsPerPlot * plots; // 18
+
     const mlPerPlant = (adjustedLevel / 100) * cropFactor.maxML;
     estimatedLiters = (mlPerPlant * totalPlants) / 1000; // mL → L
   } else {
-    const areaM2 = 10;
-    const waterPerPercent = 0.5;
-    estimatedLiters = adjustedLevel * waterPerPercent * areaM2;
+    // Fallback: area-based calculation using real plot dimensions
+    // Each plot: 900 cm (9 m) length, 125 cm (1.25 m) width
+    const plots = 2;
+    const plotLengthM = 900 / 100; // 9 m
+    const plotWidthM = 125 / 100;  // 1.25 m
+    const totalAreaM2 = plots * plotLengthM * plotWidthM; // 2 * 9 * 1.25 = 22.5 m²
+
+    const waterPerPercent = 0.5; // L per % per m² (your existing heuristic)
+    estimatedLiters = adjustedLevel * waterPerPercent * totalAreaM2;
   }
 
   return {
