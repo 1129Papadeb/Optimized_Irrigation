@@ -2,24 +2,17 @@
 
 export type CropType = 'lettuce' | 'okra' | 'tomato';
 
-type LettuceStage = 'seedlings' | 'vegetative' | 'mature';
-type OkraStage    = 'seedlings' | 'vegetative' | 'flowering' | 'mature';
-type TomatoStage  = 'seedlings' | 'vegetative' | 'flowering' | 'mature';
-
-type CropStage = LettuceStage | OkraStage | TomatoStage;
+type CropStage = 'seedlings' | 'vegetative' | 'flowering' | 'mature';
 
 interface CropFactor {
   baseML: number;
   maxML: number;
 }
 
-type CropFactors = {
-  lettuce: Record<LettuceStage, CropFactor>;
-  okra: Record<OkraStage, CropFactor>;
-  tomato: Record<TomatoStage, CropFactor>;
-};
+type CropFactors = Record<CropType, Record<CropStage, CropFactor>>;
 
 class FuzzyLogic {
+  // Triangular membership function
   static trimf(x: number, points: [number, number, number]): number {
     const [a, b, c] = points;
     if (x <= a || x >= c) return 0;
@@ -28,6 +21,7 @@ class FuzzyLogic {
     return (c - x) / (c - b);
   }
 
+  // Membership functions for soil moisture
   static soilMembership = {
     dry: (x: number) => this.trimf(x, [0, 0, 40]),
     moist: (x: number) => this.trimf(x, [30, 50, 70]),
@@ -35,24 +29,28 @@ class FuzzyLogic {
     saturated: (x: number) => this.trimf(x, [85, 100, 100]),
   };
 
+  // Membership functions for humidity
   static humidityMembership = {
     low: (x: number) => this.trimf(x, [0, 0, 50]),
     medium: (x: number) => this.trimf(x, [30, 50, 70]),
     high: (x: number) => this.trimf(x, [60, 100, 100]),
   };
 
+  // Membership functions for temperature
   static temperatureMembership = {
     low: (x: number) => this.trimf(x, [10, 15, 20]),
     medium: (x: number) => this.trimf(x, [18, 25, 32]),
     high: (x: number) => this.trimf(x, [30, 40, 40]),
   };
 
+  // Membership functions for forecast
   static forecastMembership = {
     dry: (x: number) => this.trimf(x, [0, 0, 40]),
     cloudy: (x: number) => this.trimf(x, [30, 50, 70]),
     rain: (x: number) => this.trimf(x, [60, 100, 100]),
   };
 
+  // Membership functions for plant health
   static plantHealthMembership = {
     critical: (x: number) => this.trimf(x, [0, 0, 30]),
     poor: (x: number) => this.trimf(x, [20, 40, 60]),
@@ -60,6 +58,7 @@ class FuzzyLogic {
     excellent: (x: number) => this.trimf(x, [80, 100, 100]),
   };
 
+  // Membership functions for recent irrigation
   static recentIrrigationMembership = {
     none: (x: number) => this.trimf(x, [0, 0, 20]),
     light: (x: number) => this.trimf(x, [10, 30, 50]),
@@ -67,6 +66,7 @@ class FuzzyLogic {
     heavy: (x: number) => this.trimf(x, [70, 100, 100]),
   };
 
+  // Output membership functions for irrigation level (0–100%)
   static irrigationMembership = {
     none: (x: number) => this.trimf(x, [0, 0, 20]),
     light: (x: number) => this.trimf(x, [10, 25, 40]),
@@ -74,10 +74,12 @@ class FuzzyLogic {
     heavy: (x: number) => this.trimf(x, [60, 80, 100]),
   };
 
+  // Crop-specific per-plant water factors (mL)
   static cropFactors: CropFactors = {
     lettuce: {
       seedlings:  { baseML: 50,  maxML: 100 },
       vegetative: { baseML: 150, maxML: 250 },
+      flowering:  { baseML: 150, maxML: 250 }, // unused but required by type
       mature:     { baseML: 300, maxML: 500 },
     },
     okra: {
@@ -101,6 +103,7 @@ class FuzzyLogic {
     if (crop === 'okra') {
       return days <= 21 ? 'seedlings' : days <= 42 ? 'vegetative' : 'flowering';
     }
+    // tomato
     return days <= 21
       ? 'seedlings'
       : days <= 49
@@ -110,45 +113,8 @@ class FuzzyLogic {
       : 'mature';
   }
 
-  static getCropFactor(crop: CropType, stage: CropStage): CropFactor | null {
-    if (crop === 'lettuce') {
-      if (stage === 'seedlings' || stage === 'vegetative' || stage === 'mature') {
-        const lettuceStage: LettuceStage = stage;
-        const map: Record<LettuceStage, CropFactor> = this.cropFactors.lettuce;
-        return map[lettuceStage];
-      }
-      return null;
-    }
-
-    if (crop === 'okra') {
-      if (
-        stage === 'seedlings' ||
-        stage === 'vegetative' ||
-        stage === 'flowering' ||
-        stage === 'mature'
-      ) {
-        const okraStage: OkraStage = stage;
-        const map: Record<OkraStage, CropFactor> = this.cropFactors.okra;
-        return map[okraStage];
-      }
-      return null;
-    }
-
-    if (crop === 'tomato') {
-      if (
-        stage === 'seedlings' ||
-        stage === 'vegetative' ||
-        stage === 'flowering' ||
-        stage === 'mature'
-      ) {
-        const tomatoStage: TomatoStage = stage;
-        const map: Record<TomatoStage, CropFactor> = this.cropFactors.tomato;
-        return map[tomatoStage];
-      }
-      return null;
-    }
-
-    return null;
+  static getCropFactor(crop: CropType, stage: CropStage): CropFactor {
+    return this.cropFactors[crop][stage];
   }
 
   static evaluateRules(inputs: {
