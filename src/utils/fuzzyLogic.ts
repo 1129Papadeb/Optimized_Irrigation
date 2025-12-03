@@ -1,6 +1,5 @@
 // utils/fuzzyLogic.ts
 
-// ---- Types for crops and stages ----
 export type CropType = 'lettuce' | 'okra' | 'tomato';
 
 type LettuceStage = 'seedlings' | 'vegetative' | 'mature';
@@ -75,7 +74,7 @@ class FuzzyLogic {
     heavy: (x: number) => this.trimf(x, [70, 100, 100]),
   };
 
-  // Output membership functions for irrigation (0–100% level)
+  // Output membership functions for irrigation level (0–100%)
   static irrigationMembership = {
     none: (x: number) => this.trimf(x, [0, 0, 20]),
     light: (x: number) => this.trimf(x, [10, 25, 40]),
@@ -83,51 +82,83 @@ class FuzzyLogic {
     heavy: (x: number) => this.trimf(x, [60, 80, 100]),
   };
 
-  // ---- Crop-specific per-plant water factors (mL) ----
+  // Crop-specific per-plant water factors (mL)
   static cropFactors: CropFactors = {
     lettuce: {
-      seedlings:  { baseML: 50,  maxML: 100 },  // 0–3 weeks
-      vegetative: { baseML: 150, maxML: 250 },  // 3–5 weeks
-      mature:     { baseML: 300, maxML: 500 },  // 5+ weeks
+      seedlings:  { baseML: 50,  maxML: 100 },
+      vegetative: { baseML: 150, maxML: 250 },
+      mature:     { baseML: 300, maxML: 500 },
     },
     okra: {
-      seedlings:  { baseML: 200,  maxML: 500 },   // 0.2–0.5 L
-      vegetative: { baseML: 1000, maxML: 2000 },  // 1–2 L
-      flowering:  { baseML: 1500, maxML: 2000 },  // 1.5–2 L
-      mature:     { baseML: 1500, maxML: 2000 },  // similar to flowering
+      seedlings:  { baseML: 200,  maxML: 500 },
+      vegetative: { baseML: 1000, maxML: 2000 },
+      flowering:  { baseML: 1500, maxML: 2000 },
+      mature:     { baseML: 1500, maxML: 2000 },
     },
     tomato: {
-      seedlings:  { baseML: 50,   maxML: 100 },   // 0–3 weeks
-      vegetative: { baseML: 300,  maxML: 500 },   // 3–7 weeks
-      flowering:  { baseML: 700,  maxML: 1000 },  // 7–9 weeks
-      mature:     { baseML: 1000, maxML: 1500 },  // 9+ weeks
+      seedlings:  { baseML: 50,   maxML: 100 },
+      vegetative: { baseML: 300,  maxML: 500 },
+      flowering:  { baseML: 700,  maxML: 1000 },
+      mature:     { baseML: 1000, maxML: 1500 },
     },
   };
 
   static getGrowthStage(days: number, crop: CropType): CropStage {
     if (crop === 'lettuce') {
       return days <= 21 ? 'seedlings' : days <= 35 ? 'vegetative' : 'mature';
-    } else if (crop === 'okra') {
-      return days <= 21 ? 'seedlings' : days <= 42 ? 'vegetative' : 'flowering';
-    } else {
-      // tomato
-      return days <= 21
-        ? 'seedlings'
-        : days <= 49
-        ? 'vegetative'
-        : days <= 63
-        ? 'flowering'
-        : 'mature';
     }
+    if (crop === 'okra') {
+      return days <= 21 ? 'seedlings' : days <= 42 ? 'vegetative' : 'flowering';
+    }
+    // tomato
+    return days <= 21
+      ? 'seedlings'
+      : days <= 49
+      ? 'vegetative'
+      : days <= 63
+      ? 'flowering'
+      : 'mature';
   }
 
-  // Helper used by irrigation.ts to avoid TS index error
+  // No generics, no any
   static getCropFactor(crop: CropType, stage: CropStage): CropFactor | null {
-    const factors = this.cropFactors[crop];
-    return (factors as any)[stage] ?? null;
+    if (crop === 'lettuce') {
+      const map: Record<LettuceStage, CropFactor> = this.cropFactors.lettuce;
+      if (stage === 'seedlings' || stage === 'vegetative' || stage === 'mature') {
+        return map[stage];
+      }
+      return null;
+    }
+
+    if (crop === 'okra') {
+      const map: Record<OkraStage, CropFactor> = this.cropFactors.okra;
+      if (
+        stage === 'seedlings' ||
+        stage === 'vegetative' ||
+        stage === 'flowering' ||
+        stage === 'mature'
+      ) {
+        return map[stage];
+      }
+      return null;
+    }
+
+    if (crop === 'tomato') {
+      const map: Record<TomatoStage, CropFactor> = this.cropFactors.tomato;
+      if (
+        stage === 'seedlings' ||
+        stage === 'vegetative' ||
+        stage === 'flowering' ||
+        stage === 'mature'
+      ) {
+        return map[stage];
+      }
+      return null;
+    }
+
+    return null;
   }
 
-  // ---- Fuzzy rules and defuzzification ----
   static evaluateRules(inputs: {
     soil: number;
     humidity: number;
@@ -180,7 +211,7 @@ class FuzzyLogic {
     };
 
     const rules = [
-      // Over-irrigation protection
+      // Over‑irrigation protection
       { strength: soilVals.saturated, output: 0 },
       { strength: Math.min(soilVals.wet, recentVals.heavy), output: 0 },
       { strength: Math.min(soilVals.wet, recentVals.moderate, healthVals.poor), output: 0 },
@@ -215,9 +246,6 @@ class FuzzyLogic {
     });
 
     const fuzzyLevel = denominator > 0 ? numerator / denominator : 0;
-
-    // Map fuzzy level through crop-specific factors inside irrigation.ts,
-    // so here we just return 0–100%.
     return fuzzyLevel;
   }
 }
