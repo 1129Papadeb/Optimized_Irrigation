@@ -33,8 +33,8 @@ export function assessPlantHealth(
   // Crop-specific adjustments
   const cropTolerance: { [key: string]: number } = {
     lettuce: 0.8,
-    cabbage: 1.0,
-    eggplant: 1.2
+    okra: 1.0,
+    tomatoes: 1.2
   };
   const tolerance = cropTolerance[cropType.toLowerCase()] || 1.0;
   healthScore = Math.min(100, healthScore * tolerance);
