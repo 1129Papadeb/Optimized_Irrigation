@@ -20,7 +20,6 @@ type CropFactors = {
 };
 
 class FuzzyLogic {
-  // Triangular membership function
   static trimf(x: number, points: [number, number, number]): number {
     const [a, b, c] = points;
     if (x <= a || x >= c) return 0;
@@ -29,7 +28,6 @@ class FuzzyLogic {
     return (c - x) / (c - b);
   }
 
-  // Membership functions for soil moisture
   static soilMembership = {
     dry: (x: number) => this.trimf(x, [0, 0, 40]),
     moist: (x: number) => this.trimf(x, [30, 50, 70]),
@@ -37,28 +35,24 @@ class FuzzyLogic {
     saturated: (x: number) => this.trimf(x, [85, 100, 100]),
   };
 
-  // Membership functions for humidity
   static humidityMembership = {
     low: (x: number) => this.trimf(x, [0, 0, 50]),
     medium: (x: number) => this.trimf(x, [30, 50, 70]),
     high: (x: number) => this.trimf(x, [60, 100, 100]),
   };
 
-  // Membership functions for temperature
   static temperatureMembership = {
     low: (x: number) => this.trimf(x, [10, 15, 20]),
     medium: (x: number) => this.trimf(x, [18, 25, 32]),
     high: (x: number) => this.trimf(x, [30, 40, 40]),
   };
 
-  // Membership functions for forecast
   static forecastMembership = {
     dry: (x: number) => this.trimf(x, [0, 0, 40]),
     cloudy: (x: number) => this.trimf(x, [30, 50, 70]),
     rain: (x: number) => this.trimf(x, [60, 100, 100]),
   };
 
-  // Membership functions for plant health
   static plantHealthMembership = {
     critical: (x: number) => this.trimf(x, [0, 0, 30]),
     poor: (x: number) => this.trimf(x, [20, 40, 60]),
@@ -66,7 +60,6 @@ class FuzzyLogic {
     excellent: (x: number) => this.trimf(x, [80, 100, 100]),
   };
 
-  // Membership functions for recent irrigation
   static recentIrrigationMembership = {
     none: (x: number) => this.trimf(x, [0, 0, 20]),
     light: (x: number) => this.trimf(x, [10, 30, 50]),
@@ -74,7 +67,6 @@ class FuzzyLogic {
     heavy: (x: number) => this.trimf(x, [70, 100, 100]),
   };
 
-  // Output membership functions for irrigation level (0–100%)
   static irrigationMembership = {
     none: (x: number) => this.trimf(x, [0, 0, 20]),
     light: (x: number) => this.trimf(x, [10, 25, 40]),
@@ -82,7 +74,6 @@ class FuzzyLogic {
     heavy: (x: number) => this.trimf(x, [60, 80, 100]),
   };
 
-  // Crop-specific per-plant water factors (mL)
   static cropFactors: CropFactors = {
     lettuce: {
       seedlings:  { baseML: 50,  maxML: 100 },
@@ -110,7 +101,6 @@ class FuzzyLogic {
     if (crop === 'okra') {
       return days <= 21 ? 'seedlings' : days <= 42 ? 'vegetative' : 'flowering';
     }
-    // tomato
     return days <= 21
       ? 'seedlings'
       : days <= 49
@@ -120,38 +110,40 @@ class FuzzyLogic {
       : 'mature';
   }
 
-  // No generics, no any
   static getCropFactor(crop: CropType, stage: CropStage): CropFactor | null {
     if (crop === 'lettuce') {
-      const map: Record<LettuceStage, CropFactor> = this.cropFactors.lettuce;
       if (stage === 'seedlings' || stage === 'vegetative' || stage === 'mature') {
-        return map[stage];
+        const lettuceStage: LettuceStage = stage;
+        const map: Record<LettuceStage, CropFactor> = this.cropFactors.lettuce;
+        return map[lettuceStage];
       }
       return null;
     }
 
     if (crop === 'okra') {
-      const map: Record<OkraStage, CropFactor> = this.cropFactors.okra;
       if (
         stage === 'seedlings' ||
         stage === 'vegetative' ||
         stage === 'flowering' ||
         stage === 'mature'
       ) {
-        return map[stage];
+        const okraStage: OkraStage = stage;
+        const map: Record<OkraStage, CropFactor> = this.cropFactors.okra;
+        return map[okraStage];
       }
       return null;
     }
 
     if (crop === 'tomato') {
-      const map: Record<TomatoStage, CropFactor> = this.cropFactors.tomato;
       if (
         stage === 'seedlings' ||
         stage === 'vegetative' ||
         stage === 'flowering' ||
         stage === 'mature'
       ) {
-        return map[stage];
+        const tomatoStage: TomatoStage = stage;
+        const map: Record<TomatoStage, CropFactor> = this.cropFactors.tomato;
+        return map[tomatoStage];
       }
       return null;
     }
@@ -211,14 +203,12 @@ class FuzzyLogic {
     };
 
     const rules = [
-      // Over‑irrigation protection
       { strength: soilVals.saturated, output: 0 },
       { strength: Math.min(soilVals.wet, recentVals.heavy), output: 0 },
       { strength: Math.min(soilVals.wet, recentVals.moderate, healthVals.poor), output: 0 },
       { strength: Math.min(healthVals.critical, soilVals.wet), output: 0 },
       { strength: Math.min(recentVals.heavy, humidityVals.high), output: 0 },
 
-      // Standard irrigation
       { strength: Math.min(soilVals.dry, tempVals.high, forecastVals.dry, healthVals.healthy), output: 80 },
       { strength: Math.min(soilVals.dry, tempVals.high, forecastVals.dry, healthVals.poor), output: 50 },
       { strength: Math.min(soilVals.moist, humidityVals.medium, forecastVals.dry, healthVals.healthy), output: 50 },
@@ -227,11 +217,9 @@ class FuzzyLogic {
       { strength: Math.min(humidityVals.low, soilVals.dry, healthVals.healthy), output: 50 },
       { strength: Math.min(tempVals.low, soilVals.moist), output: 25 },
 
-      // Plant health
       { strength: Math.min(healthVals.critical, soilVals.dry), output: 25 },
       { strength: Math.min(healthVals.excellent, soilVals.moist), output: 25 },
 
-      // Recent irrigation
       { strength: Math.min(recentVals.heavy, soilVals.moist), output: 0 },
       { strength: Math.min(recentVals.moderate, soilVals.wet), output: 0 },
       { strength: Math.min(recentVals.none, soilVals.dry, healthVals.healthy), output: 50 },
