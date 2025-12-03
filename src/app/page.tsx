@@ -17,7 +17,7 @@ const SmartIrrigationSystem: React.FC = () => {
   const [city, setCity] = useState<string>('Leon,Iloilo,PH');
 
   // API key
-  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY || 'c588c40cae5e3b1c9a96f7322d8f8749';
+  const apiKey = process.env.Newapp || 'c588c40cae5e3b1c9a96f7322d8f8749';
 
   // Results states
   const [weatherData, setWeatherData] = useState<ProcessedWeatherData | null>(null);
