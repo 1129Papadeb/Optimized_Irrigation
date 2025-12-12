@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { assessPlantHealth, calculateRecentIrrigationScore } from '@/utils/plantHealth';
 import { calculateIrrigation } from '@/utils/irrigation';
-import { getForecastRainChance } from '@/utils/weather';
-import type { ProcessedWeatherData, PlantHealthData, IrrigationResult } from '@/types/index';
+import type { PlantHealthData, IrrigationResult } from '@/types/index';
 import type { CropType } from '@/utils/fuzzyLogic';
+
 const SmartIrrigationSystem: React.FC = () => {
   // Form states
   const [cropType, setCropType] = useState<CropType>('lettuce');
@@ -14,45 +14,11 @@ const SmartIrrigationSystem: React.FC = () => {
   const [temperature, setTemperature] = useState<number>(25);
   const [daysSincePlanting, setDaysSincePlanting] = useState<number>(30);
   const [irrigationHistory, setIrrigationHistory] = useState<number[]>([0, 0, 0]);
-  const [city, setCity] = useState<string>('Leon,Iloilo,PH');
-
-  // API key
-  const apiKey = process.env.Newapp || 'c588c40cae5e3b1c9a96f7322d8f8749';
+  const [rainChance, setRainChance] = useState<number>(30);
 
   // Results states
-  const [weatherData, setWeatherData] = useState<ProcessedWeatherData | null>(null);
-  const [rainChance, setRainChance] = useState<number>(30);
   const [plantHealth, setPlantHealth] = useState<PlantHealthData | null>(null);
   const [irrigationResult, setIrrigationResult] = useState<IrrigationResult | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-
-  const fetchWeatherData = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    try {
-      if (apiKey === 'YOUR_DEFAULT_API_KEY_HERE' || !apiKey) {
-        setError('OpenWeather API Key is not configured. Using default weather values.');
-        setRainChance(30);
-        setWeatherData(null);
-        return;
-      }
-      const result = await getForecastRainChance(apiKey, city);
-      setRainChance(result.rainChance);
-      setWeatherData(result.weatherData);
-    } catch (err) {
-      console.error('Failed to fetch weather data:', err);
-      setError('Failed to fetch weather data. Please check your API key and city. Using default values.');
-      setRainChance(30);
-      setWeatherData(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [apiKey, city]);
-
-  useEffect(() => {
-    fetchWeatherData();
-  }, [fetchWeatherData]);
 
   const calculateRecommendation = () => {
     const recentIrrigationScore = calculateRecentIrrigationScore(irrigationHistory);
@@ -239,45 +205,9 @@ const SmartIrrigationSystem: React.FC = () => {
           padding-left: 5px;
         }
 
+        /* Weather & Location simplified (manual only) */
         .weather-section {
-          display: flex;
-          align-items: center;
-          gap: 25px;
-          margin-top: 25px;
-          flex-wrap: wrap;
-          justify-content: flex-start;
-        }
-
-        .weather-section > span {
-          flex-shrink: 0;
-        }
-
-        .weather-button {
-          background: linear-gradient(135deg, #2196F3, #1976D2);
-          color: white;
-          border: none;
-          padding: 15px 30px;
-          border-radius: 12px;
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 1.05rem;
-          transition: all 0.3s ease;
-          box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .weather-button:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 10px 30px rgba(33, 150, 243, 0.5);
-        }
-
-        .weather-button:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-          transform: none;
-          box-shadow: none;
+          margin-top: 10px;
         }
 
         /* Calculate button */
@@ -453,22 +383,6 @@ const SmartIrrigationSystem: React.FC = () => {
           font-size: 1rem;
         }
 
-        /* Weather info display */
-        .weather-info {
-          background: linear-gradient(135deg, #E8F5FF, #D0EEFF);
-          border-radius: 12px;
-          padding: 22px;
-          margin-top: 25px;
-          border: 1px solid #A7D9F8;
-          box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .weather-info p {
-          margin: 10px 0;
-          color: #1565C0;
-          font-size: 1rem;
-        }
-
         /* Safety message styling */
         .safety-message {
           padding: 25px;
@@ -496,48 +410,6 @@ const SmartIrrigationSystem: React.FC = () => {
           background: #FFF0F0;
           border: 1px solid #EF5350;
           color: #D32F2F;
-        }
-
-        /* Error message styling */
-        .error-message {
-          background: #FFF0F0;
-          border: 1px solid #EF5350;
-          color: #C62828;
-          padding: 20px;
-          border-radius: 12px;
-          margin: 30px 0;
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 1rem;
-        }
-
-        /* Loading indicator */
-        .loading {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          color: #616161;
-          font-size: 1rem;
-        }
-
-        .spinner {
-          width: 24px;
-          height: 24px;
-          border: 3px solid #e0e0e0;
-          border-top: 3px solid #2196F3;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
         }
 
         /* Irrigation history input grid */
@@ -591,11 +463,6 @@ const SmartIrrigationSystem: React.FC = () => {
           }
           .header h1 {
             font-size: 2.8rem;
-          }
-          .weather-section {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 20px;
           }
         }
 
@@ -672,20 +539,8 @@ const SmartIrrigationSystem: React.FC = () => {
             padding: 12px 15px;
           }
           .range-info,
-          .history-input label,
-          .weather-info p {
+          .history-input label {
             font-size: 0.85rem;
-          }
-          .weather-button {
-            padding: 12px 20px;
-            font-size: 0.95rem;
-            width: 100%;
-            justify-content: center;
-          }
-          .weather-section span {
-            text-align: center;
-            width: 100%;
-            font-size: 0.95rem;
           }
           .calculate-button {
             font-size: 1.1rem;
@@ -720,11 +575,6 @@ const SmartIrrigationSystem: React.FC = () => {
           }
           .safety-message {
             font-size: 0.95rem;
-            padding: 15px;
-          }
-          .error-message,
-          .loading {
-            font-size: 0.9rem;
             padding: 15px;
           }
         }
@@ -829,41 +679,31 @@ const SmartIrrigationSystem: React.FC = () => {
               </div>
             </div>
 
-            {/* Weather & Location Section */}
+            {/* Weather (Manual) Section */}
             <div className="form-section">
               <h3>
                 <span role="img" aria-label="cloud with rain">
                   🌦️
                 </span>{' '}
-                Weather & Location
+                Weather (Manual Input)
               </h3>
 
               <div className="input-group">
-                <label htmlFor="city">Location (City, State/Province, Country Code)</label>
+                <label htmlFor="rainChance">Next 24hr Rain Chance (%)</label>
                 <input
-                  type="text"
-                  id="city"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="e.g., Leon,Iloilo,PH"
+                  type="number"
+                  id="rainChance"
+                  value={rainChance}
+                  onChange={(e) => setRainChance(parseFloat(e.target.value) || 0)}
+                  min="0"
+                  max="100"
                 />
+                <div className="range-info">
+                  0–20%: Low | 20–50%: Moderate | &gt;50%: High chance of rain
+                </div>
               </div>
 
               <div className="weather-section">
-                <button
-                  className="weather-button"
-                  onClick={fetchWeatherData}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <div className="loading">
-                      <div className="spinner"></div>
-                      Fetching Weather...
-                    </div>
-                  ) : (
-                    <>🌤️ Get Latest Weather</>
-                  )}
-                </button>
                 <span>
                   Next 24hr Rain Chance:{' '}
                   <strong
@@ -880,28 +720,6 @@ const SmartIrrigationSystem: React.FC = () => {
                   </strong>
                 </span>
               </div>
-
-              {weatherData && (
-                <div className="weather-info">
-                  <p>
-                    <strong>🌤️ Current Conditions:</strong> {weatherData.description}
-                  </p>
-                  <p>
-                    <strong>🌡️ Temperature:</strong> {weatherData.temperature}°C
-                  </p>
-                  <p>
-                    <strong>💧 Humidity:</strong> {weatherData.humidity}%
-                  </p>
-                  <p>
-                    <strong>☁️ Cloudiness:</strong> {weatherData.cloudiness}%
-                  </p>
-                  {weatherData.rain > 0 && (
-                    <p>
-                      <strong>🌧️ Recent Rain:</strong> {weatherData.rain}mm/h
-                    </p>
-                  )}
-                </div>
-              )}
             </div>
 
             {/* Irrigation History Section */}
@@ -965,8 +783,6 @@ const SmartIrrigationSystem: React.FC = () => {
               </div>
             </div>
           </div>
-
-          {error && <div className="error-message">⚠️ {error}</div>}
 
           <button className="calculate-button" onClick={calculateRecommendation}>
             Get Recommendation Now
