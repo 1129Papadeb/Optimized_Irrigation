@@ -67,14 +67,17 @@ export interface PlantHealthData {
   issues: string[];
 }
 
+// types/index.ts
 export interface IrrigationResult {
   level: number;
   label: string;
   riskLevel: string;
-  estimatedLiters: number;
+  estimatedLiters: number; // total mL
   safetyMessage: string;
   rawLevel: number;
+  mlPerPlant: number;      // mL per plant
 }
+
 
 export interface FuzzyMembershipFunction {
   name: string;

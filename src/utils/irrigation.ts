@@ -19,6 +19,7 @@ export function calculateIrrigation(inputs: {
   let adjustedLevel = rawLevel;
   let safetyMessage = '✅ No safety concerns detected';
 
+  // Safety overrides
   if (inputs.soil > 85) {
     adjustedLevel = 0;
     safetyMessage =
@@ -33,6 +34,7 @@ export function calculateIrrigation(inputs: {
       '🏥 HEALTH PROTECTION: Plant health is poor - reducing irrigation to prevent further stress!';
   }
 
+  // Clamp 0–100
   adjustedLevel = Math.min(Math.max(adjustedLevel, 0), 100);
 
   let label: string;
@@ -53,37 +55,36 @@ export function calculateIrrigation(inputs: {
       inputs.soil > 50 || inputs.recentIrrigation > 40 ? 'High Risk' : 'Medium Risk';
   }
 
-  // Crop + stage specific water estimation (type-safe)
+  // Crop + stage specific water estimation (per plant, in mL)
   const stage = FuzzyLogic.getGrowthStage(inputs.daysSincePlanting, inputs.cropType);
   const cropFactor = FuzzyLogic.getCropFactor(inputs.cropType, stage);
 
-  let estimatedLiters: number;
-  if (cropFactor) {
-    // 2 plots, each 900 cm, 100 cm per plant → 9 plants/plot → 18 plants total
-    const plantsPerPlot = 900 / 100; // 9
-    const plots = 2;
-    const totalPlants = plantsPerPlot * plots; // 18
+  // Spacing:
+  // - Area per plant: 50 x 50 cm
+  // - Area per crop row: 50 x 150 cm  → 3 plants per crop row
+  // - We have 3 crops  → 3 * 3 = 9 plants total
+// AFTER – 1 crop selected in the UI
+const plantsPerCrop = 150 / 50; // 3 plants in that 50×150 cm row
+const totalPlants = plantsPerCrop; // 3 plants total
 
-    const mlPerPlant = (adjustedLevel / 100) * cropFactor.maxML;
-    estimatedLiters = (mlPerPlant * totalPlants) / 1000; // mL → L
-  } else {
-    // Fallback: area-based calculation using real plot dimensions
-    // Each plot: 900 cm (9 m) length, 125 cm (1.25 m) width
-    const plots = 2;
-    const plotLengthM = 900 / 100; // 9 m
-    const plotWidthM = 125 / 100;  // 1.25 m
-    const totalAreaM2 = plots * plotLengthM * plotWidthM; // 2 * 9 * 1.25 = 22.5 m²
 
-    const waterPerPercent = 0.5; // L per % per m² (your existing heuristic)
-    estimatedLiters = adjustedLevel * waterPerPercent * totalAreaM2;
-  }
+// mL per plant based on fuzzy level and crop max
+const rawMlPerPlant = (adjustedLevel / 100) * cropFactor.maxML;
+
+// Global realism scaling (tune between 0.3–0.8)
+const scalingFactor = 0.8;
+const mlPerPlant = rawMlPerPlant * scalingFactor;
+
+const totalML = mlPerPlant * totalPlants;
 
   return {
     level: adjustedLevel,
     label,
     riskLevel,
-    estimatedLiters: Number(estimatedLiters.toFixed(2)),
+    // Note: field name kept as estimatedLiters for compatibility, but value is mL
+    estimatedLiters: Number(totalML.toFixed(0)), // mL total, rounded
     safetyMessage,
     rawLevel,
+    mlPerPlant: Number(mlPerPlant.toFixed(0)),
   };
 }

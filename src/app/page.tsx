@@ -7,7 +7,6 @@ import type { PlantHealthData, IrrigationResult } from '@/types/index';
 import type { CropType } from '@/utils/fuzzyLogic';
 
 const SmartIrrigationSystem: React.FC = () => {
-  // Form states
   const [cropType, setCropType] = useState<CropType>('lettuce');
   const [soilMoisture, setSoilMoisture] = useState<number>(45);
   const [humidity, setHumidity] = useState<number>(60);
@@ -15,8 +14,6 @@ const SmartIrrigationSystem: React.FC = () => {
   const [daysSincePlanting, setDaysSincePlanting] = useState<number>(30);
   const [irrigationHistory, setIrrigationHistory] = useState<number[]>([0, 0, 0]);
   const [rainChance, setRainChance] = useState<number>(30);
-
-  // Results states
   const [plantHealth, setPlantHealth] = useState<PlantHealthData | null>(null);
   const [irrigationResult, setIrrigationResult] = useState<IrrigationResult | null>(null);
 
@@ -46,804 +43,838 @@ const SmartIrrigationSystem: React.FC = () => {
 
   const getRiskColor = (risk: string): string => {
     switch (risk) {
-      case 'Low Risk':
-        return '#4CAF50';
-      case 'Medium Risk':
-        return '#FFC107';
-      case 'High Risk':
-        return '#F44336';
-      default:
-        return '#9E9E9E';
+      case 'Low Risk': return '#10b981';
+      case 'Medium Risk': return '#f59e0b';
+      case 'High Risk': return '#ef4444';
+      default: return '#6b7280';
     }
   };
 
   const getHealthColor = (status: string): string => {
     switch (status) {
       case 'Excellent':
-        return '#4CAF50';
-      case 'Healthy':
-        return '#4CAF50';
-      case 'Poor':
-        return '#FFC107';
-      case 'Critical':
-        return '#F44336';
-      default:
-        return '#9E9E9E';
+      case 'Healthy': return '#10b981';
+      case 'Poor': return '#f59e0b';
+      case 'Critical': return '#ef4444';
+      default: return '#6b7280';
     }
   };
 
   return (
-    <div className="irrigation-container">
+    <div className="irrigation-wrapper">
       <style jsx>{`
-        /* Root container for the entire page */
-        .irrigation-container {
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+        .irrigation-wrapper {
           min-height: 100vh;
-          background-image: #ffffff;
-          padding: 20px;
-          font-family: 'Inter', sans-serif;
-          color: #333;
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
+          background: #0a0e27;
+          position: relative;
+          overflow-x: hidden;
+          font-family: 'Outfit', sans-serif;
         }
 
-        /* Main card holding all content */
-        .main-card {
-          max-width: 1400px;
+        /* Animated background */
+        .irrigation-wrapper::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+          animation: pulse 15s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Floating particles */
+        .particles {
+          position: fixed;
+          top: 0;
+          left: 0;
           width: 100%;
-          margin: 20px auto;
-          background: linear-gradient(135deg, #0453134f 30%, #3CB371 100%);
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-          overflow: hidden;
-          backdrop-filter: blur(15px);
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          border-radius: 25px;
+          height: 100%;
+          pointer-events: none;
+          z-index: 1;
         }
 
-        /* Header section with title and description */
-        .header {
-          background: linear-gradient(135deg, #3CB371 0%, #2E8B57 100%);
-          padding: 40px;
+        .particle {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: rgba(16, 185, 129, 0.3);
+          border-radius: 50%;
+          animation: float-particle 20s infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 1s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 2.5s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 4.5s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 1.5s; }
+
+        @keyframes float-particle {
+          0% { transform: translateY(100vh) scale(0); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+
+        .container {
+          max-width: 1600px;
+          margin: 0 auto;
+          padding: 40px 20px;
+          position: relative;
+          z-index: 2;
+        }
+
+        /* Hero Header */
+        .hero-header {
           text-align: center;
-          color: white;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+          margin-bottom: 60px;
+          position: relative;
         }
 
-        .header h1 {
-          margin: 0;
-          font-size: 3.2rem;
-          font-weight: 800;
-          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-          letter-spacing: -1.5px;
+        /* LOGO STYLES - NEW */
+        .hero-logo {
+          display: block;
+          margin: 0 auto 10px;
+          width: 150px;
+          height: auto;
+          filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.6));
+          animation: logoFloat 4s ease-in-out infinite;
+        }
+      
+        .hero-logo img {
+          width: 140px;   /* adjust this value until it feels right */
+          height: auto;
+        }
+        @keyframes logoFloat {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(2deg); }
         }
 
-        .header p {
-          margin: 15px 0 0;
-          font-size: 1.25rem;
-          opacity: 0.98;
-          max-width: 650px;
-          margin-left: auto;
-          margin-right: auto;
+        .hero-title {
+          font-size: 5rem;
+          font-weight: 900;
+          background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          margin: 0 0 20px 0;
+          letter-spacing: -3px;
+          text-transform: uppercase;
+          animation: glow 3s ease-in-out infinite;
+          font-family: 'Space Grotesk', sans-serif;
         }
 
-        /* Main content area */
-        .content {
-          padding: 50px;
+        @keyframes glow {
+          0%, 100% { filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5)); }
+          50% { filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.8)); }
         }
 
-        /* Grid for form sections */
-        .form-grid {
+        .hero-subtitle {
+          font-size: 1.5rem;
+          color: #94a3b8;
+          font-weight: 400;
+          max-width: 700px;
+          margin: 0 auto;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-          gap: 40px;
-          margin-bottom: 50px;
-        }
-
-        /* Individual form section card */
-        .form-section {
-          background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-          padding: 35px;
-          border-radius: 20px;
-          border: 1px solid #e0e0e0;
-          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);
-          transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-
-        .form-section:hover {
-          transform: translateY(-7px);
-          box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
-        }
-
-        .form-section h3 {
-          margin: 0 0 28px;
-          color: #212121;
-          font-size: 1.7rem;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          border-bottom: 2px solid #D4EDDA;
-          padding-bottom: 15px;
-        }
-
-        .input-group {
+          grid-template-columns: 1fr 1fr;
+          gap: 30px;
           margin-bottom: 30px;
         }
 
-        .input-group label {
-          display: block;
-          margin-bottom: 12px;
-          color: #424242;
-          font-weight: 600;
-          font-size: 1.05rem;
+        /* Neon Card Style */
+        .neon-card {
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(16, 185, 129, 0.2);
+          border-radius: 24px;
+          padding: 40px;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .input-group input,
-        .input-group select {
+        .neon-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #10b981, transparent);
+          animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        .neon-card:hover {
+          transform: translateY(-8px);
+          border-color: rgba(16, 185, 129, 0.5);
+          box-shadow: 0 20px 60px rgba(16, 185, 129, 0.3);
+        }
+
+        .card-header {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          margin-bottom: 30px;
+        }
+
+        .card-icon {
+          width: 50px;
+          height: 50px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2rem;
+          background: linear-gradient(135deg, #10b981, #059669);
+          border-radius: 16px;
+          box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .card-title {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #fff;
+          margin: 0;
+          font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Custom Input Styles */
+        .input-wrapper {
+          margin-bottom: 25px;
+        }
+
+        .input-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #94a3b8;
+          font-size: 0.95rem;
+          font-weight: 600;
+          margin-bottom: 10px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .cyber-input {
           width: 100%;
-          padding: 15px 20px;
-          border: 2px solid #d0d0d0;
+          background: rgba(30, 41, 59, 0.5);
+          border: 2px solid rgba(16, 185, 129, 0.3);
           border-radius: 12px;
+          padding: 16px 20px;
+          color: #fff;
           font-size: 1.1rem;
+          font-weight: 600;
+          font-family: 'Outfit', sans-serif;
           transition: all 0.3s ease;
           box-sizing: border-box;
-          background-color: #ffffff;
-          color: #333;
         }
 
-        .input-group input:focus,
-        .input-group select:focus {
+        .cyber-input:focus {
           outline: none;
-          border-color: #4CAF50;
-          box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.2);
+          border-color: #10b981;
+          background: rgba(30, 41, 59, 0.8);
+          box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 0 20px rgba(16, 185, 129, 0.1);
         }
 
-        .range-info {
-          font-size: 0.95rem;
-          color: #757575;
-          margin-top: 10px;
-          padding-left: 5px;
+        .cyber-input::placeholder {
+          color: #475569;
         }
 
-        /* Weather & Location simplified (manual only) */
-        .weather-section {
-          margin-top: 10px;
+        .input-hint {
+          font-size: 0.85rem;
+          color: #64748b;
+          margin-top: 6px;
+          font-style: italic;
         }
 
-        /* Calculate button */
-        .calculate-button {
-          width: 100%;
-          background: linear-gradient(135deg, #4CAF50, #2E7D32);
-          color: white;
-          border: none;
-          padding: 22px 28px;
-          border-radius: 15px;
-          font-size: 1.4rem;
-          font-weight: 700;
+        /* Slider styling */
+        .cyber-input[type="range"] {
+          padding: 0;
+          height: 8px;
+          background: linear-gradient(90deg, #1e293b 0%, #10b981 100%);
+          border-radius: 10px;
           cursor: pointer;
+        }
+
+        /* Action Button */
+        .action-button {
+          width: 100%;
+          background: linear-gradient(135deg, #10b981, #3b82f6);
+          border: none;
+          border-radius: 16px;
+          padding: 24px;
+          font-size: 1.4rem;
+          font-weight: 800;
+          color: #fff;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
           transition: all 0.3s ease;
-          box-shadow: 0 10px 30px rgba(76, 175, 80, 0.4);
-          margin: 50px 0;
-          letter-spacing: 0.7px;
+          font-family: 'Space Grotesk', sans-serif;
+          box-shadow: 0 10px 40px rgba(16, 185, 129, 0.4);
         }
 
-        .calculate-button:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 40px rgba(76, 175, 80, 0.5);
+        .action-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          transition: left 0.5s;
         }
 
-        /* Grid for results */
-        .results-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-          gap: 35px;
+        .action-button:hover::before {
+          left: 100%;
+        }
+
+        .action-button:hover {
+          transform: scale(1.02);
+          box-shadow: 0 15px 50px rgba(16, 185, 129, 0.6);
+        }
+
+        .action-button:active {
+          transform: scale(0.98);
+        }
+
+        /* Results Section */
+        .results-section {
           margin-top: 50px;
         }
 
-        /* Individual result card */
-        .result-card {
-          background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-          border-radius: 20px;
-          padding: 35px;
-          box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e0e0e0;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
+        .results-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 30px;
         }
 
-        .result-card h4 {
-          margin: 0 0 28px;
-          color: #212121;
-          font-size: 1.9rem;
+        /* Giant Irrigation Display */
+        .irrigation-display {
+          grid-column: 1 / -1;
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+          backdrop-filter: blur(20px);
+          border: 2px solid rgba(16, 185, 129, 0.3);
+          border-radius: 32px;
+          padding: 60px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .irrigation-display::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: repeating-conic-gradient(
+            from 0deg,
+            transparent 0deg 10deg,
+            rgba(16, 185, 129, 0.03) 10deg 20deg
+          );
+          animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+          100% { transform: rotate(360deg); }
+        }
+
+        .irrigation-label {
+          font-size: 2rem;
           font-weight: 700;
+          color: #10b981;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          margin-bottom: 20px;
+          position: relative;
+          z-index: 1;
+        }
+
+        .irrigation-value {
+          font-size: 8rem;
+          font-weight: 900;
+          background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          line-height: 1;
+          margin: 20px 0;
+          position: relative;
+          z-index: 1;
+          font-family: 'Space Grotesk', sans-serif;
+          text-shadow: 0 0 80px rgba(16, 185, 129, 0.5);
+        }
+
+        .risk-badge {
+          display: inline-block;
+          padding: 12px 30px;
+          border-radius: 50px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          position: relative;
+          z-index: 1;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Info Cards */
+        .info-card {
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(100, 116, 139, 0.2);
+          border-radius: 24px;
+          padding: 35px;
+          transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+          border-color: rgba(16, 185, 129, 0.4);
+          box-shadow: 0 15px 40px rgba(16, 185, 129, 0.2);
+        }
+
+        .info-card-title {
+          font-size: 1.5rem;
+          font-weight: 800;
+          color: #fff;
+          margin: 0 0 25px 0;
           display: flex;
           align-items: center;
           gap: 12px;
-          border-bottom: 2px solid #f0f0f0;
-          padding-bottom: 15px;
+          font-family: 'Space Grotesk', sans-serif;
         }
 
-        .metric {
+        .stat-row {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 18px 0;
-          border-bottom: 1px solid #f5f5f5;
+          padding: 15px 0;
+          border-bottom: 1px solid rgba(100, 116, 139, 0.2);
         }
 
-        .metric:last-child {
+        .stat-row:last-child {
           border-bottom: none;
         }
 
-        .metric-label {
-          color: #616161;
+        .stat-label {
+          color: #94a3b8;
+          font-size: 1rem;
           font-weight: 500;
-          font-size: 1.1rem;
         }
 
-        .metric-value {
+        .stat-value {
+          color: #fff;
+          font-size: 1.3rem;
           font-weight: 700;
-          color: #333;
-          font-size: 1.15rem;
         }
 
         .status-badge {
-          padding: 9px 18px;
-          border-radius: 25px;
-          font-size: 1rem;
-          font-weight: 600;
-          color: white;
-          text-transform: uppercase;
-          letter-spacing: 0.7px;
-        }
-
-        /* Irrigation level display */
-        .irrigation-level {
-          text-align: center;
-          padding: 35px;
-          margin: 25px 0;
+          padding: 8px 16px;
           border-radius: 20px;
-          background: linear-gradient(135deg, #E3F2FD, #3a92beff);
-          border: 2px dashed #90CAF9;
-          box-shadow: inset 0 0 18px rgba(0, 150, 136, 0.08);
-        }
-
-        .irrigation-level h3 {
-          margin: 0 0 18px;
-          font-size: 2.4rem;
-          color: #1565C0;
-          font-weight: 800;
-        }
-
-        .irrigation-percentage {
-          font-size: 4.2rem;
-          font-weight: 900;
-          color: #0D47A1;
-          margin: 18px 0;
-          text-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Health issues section */
-        .health-issues {
-          margin-top: 30px;
-          background: #FFF0F0;
-          border-left: 6px solid #EF5350;
-          padding: 18px 25px;
-          border-radius: 10px;
-        }
-
-        .health-issues strong {
-          color: #D32F2F;
-          font-size: 1.1rem;
-          display: block;
-          margin-bottom: 12px;
-        }
-
-        .health-issues ul {
-          margin: 0;
-          padding-left: 28px;
-          list-style-type: '🚨 ';
-        }
-
-        .health-issues li {
-          color: #C62828;
-          margin-bottom: 10px;
-          font-size: 1rem;
-        }
-
-        /* Recommendations section */
-        .recommendations {
-          background: #FFFCE6;
-          border-left: 6px solid #FFD740;
-          border-radius: 10px;
-          padding: 22px;
-          margin-top: 35px;
-        }
-
-        .recommendations h5 {
-          margin: 0 0 18px;
-          color: #FBC02D;
-          font-size: 1.25rem;
+          font-size: 0.9rem;
           font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        /* Alert Boxes */
+        .alert-box {
+          background: rgba(239, 68, 68, 0.1);
+          border: 2px solid rgba(239, 68, 68, 0.3);
+          border-radius: 16px;
+          padding: 20px 25px;
+          margin: 20px 0;
+        }
+
+        .alert-box.warning {
+          background: rgba(245, 158, 11, 0.1);
+          border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .alert-box.success {
+          background: rgba(16, 185, 129, 0.1);
+          border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-title {
+          font-weight: 700;
+          font-size: 1.1rem;
+          margin-bottom: 12px;
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
         }
 
-        .recommendations ul {
+        .alert-list {
+          list-style: none;
+          padding: 0;
           margin: 0;
-          padding-left: 28px;
-          list-style-type: '✅ ';
         }
 
-        .recommendations li {
-          color: #F9A825;
-          margin-bottom: 10px;
-          font-size: 1rem;
-        }
-
-        /* Safety message styling */
-        .safety-message {
-          padding: 25px;
-          border-radius: 18px;
-          margin: 30px 0;
-          font-weight: 700;
-          font-size: 1.15rem;
-          text-align: center;
+        .alert-list li {
+          padding: 8px 0;
+          padding-left: 24px;
+          position: relative;
+          color: #cbd5e1;
           line-height: 1.6;
         }
 
-        .safety-message.safe {
-          background: #E8F5E9;
-          border: 1px solid #4CAF50;
-          color: #2E7D32;
+        .alert-list li::before {
+          content: '→';
+          position: absolute;
+          left: 0;
+          color: #10b981;
+          font-weight: 700;
         }
 
-        .safety-message.warning {
-          background: #FFFCE6;
-          border: 1px solid #FFC107;
-          color: #FF8F00;
-        }
-
-        .safety-message.danger {
-          background: #FFF0F0;
-          border: 1px solid #EF5350;
-          color: #D32F2F;
-        }
-
-        /* Irrigation history input grid */
-        .irrigation-history {
+        /* History inputs */
+        .history-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 25px;
-          margin-top: 25px;
+          gap: 15px;
+          margin-top: 15px;
         }
 
-        .history-input {
+        .history-item {
           text-align: center;
         }
 
-        .history-input label {
-          font-size: 0.95rem;
-          color: #757575;
-          margin-bottom: 10px;
+        .history-label {
           display: block;
+          font-size: 0.85rem;
+          color: #64748b;
+          margin-bottom: 8px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
 
-        .history-input input {
-          border-radius: 8px;
-          padding: 8px 12px;
-          border: 1px solid #ccc;
+        .history-input {
+          width: 100%;
+          background: rgba(30, 41, 59, 0.5);
+          border: 2px solid rgba(16, 185, 129, 0.2);
+          border-radius: 10px;
+          padding: 12px;
+          color: #fff;
+          font-size: 1.1rem;
+          font-weight: 700;
+          text-align: center;
+          font-family: 'Outfit', sans-serif;
+          box-sizing: border-box;
         }
 
-        /* Responsive adjustments */
+        .history-input:focus {
+          outline: none;
+          border-color: #10b981;
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Responsive */
         @media (max-width: 1200px) {
-          .main-card {
-            margin: 15px;
+          .dashboard-grid {
+            grid-template-columns: 1fr;
           }
-          .content {
-            padding: 40px;
-          }
-          .form-grid,
-          .results-grid {
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-          }
-        }
-
-        @media (max-width: 1024px) {
-          .content {
-            padding: 30px;
-          }
-          .form-grid,
           .results-grid {
             grid-template-columns: 1fr;
-            gap: 30px;
-          }
-          .header h1 {
-            font-size: 2.8rem;
           }
         }
 
         @media (max-width: 768px) {
-          .irrigation-container {
-            padding: 15px;
-          }
-          .main-card {
-            margin: 15px auto;
-            border-radius: 20px;
-          }
-          .header {
-            padding: 30px 20px;
-          }
-          .header h1 {
-            font-size: 2.4rem;
-          }
-          .header p {
-            font-size: 1.1rem;
-          }
-          .content {
-            padding: 25px;
-          }
-          .form-section h3,
-          .result-card h4 {
-            font-size: 1.6rem;
-          }
-          .input-group input,
-          .input-group select {
-            padding: 14px 18px;
-            font-size: 1rem;
-          }
-          .calculate-button {
-            padding: 18px 22px;
-            font-size: 1.2rem;
-          }
-          .irrigation-percentage {
-            font-size: 3.5rem;
-          }
-          .irrigation-history {
-            grid-template-columns: 1fr;
-          }
-          .safety-message {
-            padding: 20px;
-            font-size: 1.05rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .header h1 {
-            font-size: 2rem;
-          }
-          .header p {
-            font-size: 1rem;
-          }
-          .content {
-            padding: 20px;
-          }
-          .form-section,
-          .result-card {
-            padding: 25px;
-          }
-          .form-section h3,
-          .result-card h4 {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-          }
-          .input-group label {
-            font-size: 1rem;
-          }
-          .input-group input,
-          .input-group select {
-            font-size: 0.95rem;
-            padding: 12px 15px;
-          }
-          .range-info,
-          .history-input label {
-            font-size: 0.85rem;
-          }
-          .calculate-button {
-            font-size: 1.1rem;
-            padding: 15px 20px;
-            margin: 30px 0;
-          }
-          .metric-label,
-          .metric-value {
-            font-size: 1rem;
-          }
-          .status-badge {
-            padding: 7px 14px;
-            font-size: 0.9rem;
-          }
-          .irrigation-level h3 {
-            font-size: 2rem;
-          }
-          .irrigation-percentage {
+          .hero-title {
             font-size: 3rem;
           }
-          .health-issues,
-          .recommendations {
-            padding: 15px 20px;
+          .hero-logo {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto 16px;
           }
-          .health-issues strong,
-          .recommendations h5 {
-            font-size: 1rem;
+          .irrigation-value {
+            font-size: 5rem;
           }
-          .health-issues ul,
-          .recommendations ul {
-            padding-left: 20px;
+          .card-title {
+            font-size: 1.4rem;
           }
-          .safety-message {
-            font-size: 0.95rem;
-            padding: 15px;
+          .history-grid {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
 
-      <div className="main-card">
-        <div className="header">
-          <h1>Smart Irrigation System</h1>
+      {/* Floating particles */}
+      <div className="particles">
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+        <div className="particle"></div>
+      </div>
+
+      <div className="container">
+        {/* Hero Header WITH LOGO */}
+        <div className="hero-header">
+          {/* LOGO - Place your logo.png in public/ folder */}
+          <div className="hero-logo">
+            <img src="/logo.png" alt="Plantelligence Logo" />
+          </div>
+          <h1 className="hero-title">Plantelligence</h1>
+          <p className="hero-subtitle">
+            Precision irrigation powered by advanced analytics
+          </p>
         </div>
 
-        <div className="content">
-          <div className="form-grid">
-            {/* Plant Information Section */}
-            <div className="form-section">
-              <h3>
-                <span role="img" aria-label="plant">
-                  🌱
-                </span>{' '}
-                Plant Information
-              </h3>
-
-              <div className="input-group">
-                <label htmlFor="cropType">Crop Type</label>
-                <select
-                  id="cropType"
-                  value={cropType}
-                  onChange={(e) => setCropType(e.target.value as CropType)}
-                >
-                  <option value="lettuce">🥬 Lettuce (Sensitive to Water)</option>
-                  <option value="okra">🫛 Okra (Moderate Water Needs)</option>
-                  <option value="tomato">🍅 Tomato (Moderate Water Needs)</option>
-                </select>
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="daysSincePlanting">Days Since Planting</label>
-                <input
-                  type="number"
-                  id="daysSincePlanting"
-                  value={daysSincePlanting}
-                  onChange={(e) => setDaysSincePlanting(parseInt(e.target.value) || 0)}
-                  min="1"
-                  max="365"
-                />
-                <div className="range-info">
-                  Younger plants (e.g., &lt;14 days) are typically more sensitive to conditions.
-                </div>
-              </div>
+        {/* Dashboard Grid */}
+        <div className="dashboard-grid">
+          {/* Plant Information */}
+          <div className="neon-card">
+            <div className="card-header">
+              <div className="card-icon">🌱</div>
+              <h3 className="card-title">Plant Profile</h3>
             </div>
 
-            {/* Environmental Conditions Section */}
-            <div className="form-section">
-              <h3>
-                <span role="img" aria-label="thermometer">
-                  🌡️
-                </span>{' '}
-                Environmental Conditions
-              </h3>
-
-              <div className="input-group">
-                <label htmlFor="soilMoisture">Soil Moisture (%)</label>
-                <input
-                  type="number"
-                  id="soilMoisture"
-                  value={soilMoisture}
-                  onChange={(e) => setSoilMoisture(parseFloat(e.target.value) || 0)}
-                  min="0"
-                  max="100"
-                  step="0.1"
-                />
-                <div className="range-info">
-                  Ranges: Dry (0-40%) | Moist (30-70%) | Wet (60-85%) | Saturated (85-100%)
-                </div>
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="humidity">Humidity (%)</label>
-                <input
-                  type="number"
-                  id="humidity"
-                  value={humidity}
-                  onChange={(e) => setHumidity(parseFloat(e.target.value) || 0)}
-                  min="0"
-                  max="100"
-                />
-                <div className="range-info">
-                  Ranges: Low (0-50%) | Medium (30-70%) | High (60-100%)
-                </div>
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="temperature">Temperature (°C)</label>
-                <input
-                  type="number"
-                  id="temperature"
-                  value={temperature}
-                  onChange={(e) => setTemperature(parseFloat(e.target.value) || 0)}
-                  min="10"
-                  max="40"
-                />
-                <div className="range-info">Optimal range for most crops: 18-32°C</div>
-              </div>
-            </div>
-
-            {/* Weather (Manual) Section */}
-            <div className="form-section">
-              <h3>
-                <span role="img" aria-label="cloud with rain">
-                  🌦️
-                </span>{' '}
-                Weather (Manual Input)
-              </h3>
-
-              <div className="input-group">
-                <label htmlFor="rainChance">Next 24hr Rain Chance (%)</label>
-                <input
-                  type="number"
-                  id="rainChance"
-                  value={rainChance}
-                  onChange={(e) => setRainChance(parseFloat(e.target.value) || 0)}
-                  min="0"
-                  max="100"
-                />
-                <div className="range-info">
-                  0–20%: Low | 20–50%: Moderate | &gt;50%: High chance of rain
-                </div>
-              </div>
-
-              <div className="weather-section">
-                <span>
-                  Next 24hr Rain Chance:{' '}
-                  <strong
-                    style={{
-                      color:
-                        rainChance > 50
-                          ? '#F44336'
-                          : rainChance > 20
-                          ? '#FFC107'
-                          : '#4CAF50',
-                    }}
-                  >
-                    {rainChance}%
-                  </strong>
-                </span>
-              </div>
-            </div>
-
-            {/* Irrigation History Section */}
-            <div className="form-section">
-              <h3>
-                <span role="img" aria-label="chart">
-                  📊
-                </span>{' '}
-                Recent Irrigation History
-              </h3>
-              <p
-                style={{
-                  fontSize: '0.95rem',
-                  color: '#616161',
-                  marginBottom: '15px',
-                }}
+            <div className="input-wrapper">
+              <label className="input-label">Crop Type</label>
+              <select
+                className="cyber-input"
+                value={cropType}
+                onChange={(e) => setCropType(e.target.value as CropType)}
               >
-                Input the amount of irrigation applied (in %) for the past 3 days.
-              </p>
+                <option value="lettuce">🥬 Lettuce</option>
+                <option value="okra">🫛 Okra</option>
+                <option value="tomato">🍅 Tomato</option>
+              </select>
+            </div>
 
-              <div className="irrigation-history">
-                <div className="history-input">
-                  <label>Today (0-100%)</label>
+            <div className="input-wrapper">
+              <label className="input-label">Days Since Planting</label>
+              <input
+                type="number"
+                className="cyber-input"
+                value={daysSincePlanting}
+                onChange={(e) => setDaysSincePlanting(parseInt(e.target.value) || 0)}
+                min="1"
+                max="365"
+              />
+              <div className="input-hint">Plant age affects water sensitivity</div>
+            </div>
+          </div>
+
+          {/* Environmental Sensors */}
+          <div className="neon-card">
+            <div className="card-header">
+              <div className="card-icon">🌡️</div>
+              <h3 className="card-title">Environmental Sensors</h3>
+            </div>
+
+            <div className="input-wrapper">
+              <label className="input-label">💧 Soil Moisture ({soilMoisture}%)</label>
+              <input
+                type="range"
+                className="cyber-input"
+                value={soilMoisture}
+                onChange={(e) => setSoilMoisture(parseFloat(e.target.value))}
+                min="0"
+                max="100"
+                step="1"
+              />
+            </div>
+
+            <div className="input-wrapper">
+              <label className="input-label">💨 Humidity ({humidity}%)</label>
+              <input
+                type="range"
+                className="cyber-input"
+                value={humidity}
+                onChange={(e) => setHumidity(parseFloat(e.target.value))}
+                min="0"
+                max="100"
+                step="1"
+              />
+            </div>
+
+            <div className="input-wrapper">
+              <label className="input-label">🌡️ Temperature ({temperature}°C)</label>
+              <input
+                type="range"
+                className="cyber-input"
+                value={temperature}
+                onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                min="10"
+                max="40"
+                step="1"
+              />
+            </div>
+          </div>
+
+          {/* Weather Forecast */}
+          <div className="neon-card">
+            <div className="card-header">
+              <div className="card-icon">🌦️</div>
+              <h3 className="card-title">Weather Forecast</h3>
+            </div>
+
+            <div className="input-wrapper">
+              <label className="input-label">⛈️ Rain Probability 24hr ({rainChance}%)</label>
+              <input
+                type="range"
+                className="cyber-input"
+                value={rainChance}
+                onChange={(e) => setRainChance(parseFloat(e.target.value))}
+                min="0"
+                max="100"
+                step="1"
+              />
+              <div className="input-hint">
+                {rainChance > 50 ? 'High chance - reduce irrigation' : rainChance > 20 ? 'Moderate chance' : 'Low chance - proceed normally'}
+              </div>
+            </div>
+          </div>
+
+          {/* Irrigation History */}
+          <div className="neon-card">
+            <div className="card-header">
+              <div className="card-icon">📊</div>
+              <h3 className="card-title">Irrigation History</h3>
+            </div>
+
+            <div className="input-wrapper">
+              <label className="input-label">Recent Applications (%)</label>
+              <div className="history-grid">
+                <div className="history-item">
+                  <span className="history-label">Today</span>
                   <input
                     type="number"
+                    className="history-input"
                     value={irrigationHistory[0]}
-                    onChange={(e) =>
-                      handleIrrigationHistoryChange(0, e.target.value)
-                    }
+                    onChange={(e) => handleIrrigationHistoryChange(0, e.target.value)}
                     min="0"
                     max="100"
-                    placeholder="0"
                   />
                 </div>
-                <div className="history-input">
-                  <label>Yesterday (0-100%)</label>
+                <div className="history-item">
+                  <span className="history-label">Yesterday</span>
                   <input
                     type="number"
+                    className="history-input"
                     value={irrigationHistory[1]}
-                    onChange={(e) =>
-                      handleIrrigationHistoryChange(1, e.target.value)
-                    }
+                    onChange={(e) => handleIrrigationHistoryChange(1, e.target.value)}
                     min="0"
                     max="100"
-                    placeholder="0"
                   />
                 </div>
-                <div className="history-input">
-                  <label>2 Days Ago (0-100%)</label>
+                <div className="history-item">
+                  <span className="history-label">2 Days Ago</span>
                   <input
                     type="number"
+                    className="history-input"
                     value={irrigationHistory[2]}
-                    onChange={(e) =>
-                      handleIrrigationHistoryChange(2, e.target.value)
-                    }
+                    onChange={(e) => handleIrrigationHistoryChange(2, e.target.value)}
                     min="0"
                     max="100"
-                    placeholder="0"
                   />
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <button className="calculate-button" onClick={calculateRecommendation}>
-            Get Recommendation Now
-          </button>
+        {/* Action Button */}
+        <button className="action-button" onClick={calculateRecommendation}>
+          ⚡ Calculate Irrigation Plan
+        </button>
 
-          {/* Results Section */}
-          {irrigationResult && plantHealth && (
+        {/* Results Section */}
+        {irrigationResult && plantHealth && (
+          <div className="results-section">
+            {/* Giant Irrigation Display */}
+            <div className="irrigation-display">
+              <div className="irrigation-label">{irrigationResult.label}</div>
+              <div className="irrigation-value">{irrigationResult.level.toFixed(1)}%</div>
+              <div
+                className="risk-badge"
+                style={{
+                  background: getRiskColor(irrigationResult.riskLevel),
+                  color: '#fff',
+                }}
+              >
+                {irrigationResult.riskLevel}
+              </div>
+            </div>
+
             <div className="results-grid">
-              {/* Irrigation Recommendation */}
-              <div className="result-card">
-                <h4>💧 Irrigation Recommendation</h4>
-                <div className="irrigation-level">
-                  <h3>{irrigationResult.label}</h3>
-                  <div className="irrigation-percentage">
-                    {irrigationResult.level.toFixed(1)}
-                    <small>%</small>
-                  </div>
-                  <div
-                    className="status-badge"
-                    style={{ backgroundColor: getRiskColor(irrigationResult.riskLevel) }}
-                  >
-                    {irrigationResult.riskLevel}
-                  </div>
+              {/* Water Usage */}
+              <div className="info-card">
+                <h4 className="info-card-title">
+                  <span>💧</span> Water Requirements
+                </h4>
+                <div className="stat-row">
+                  <span className="stat-label">Total Volume</span>
+                  <span className="stat-value">{irrigationResult.estimatedLiters?.toFixed(0) || '0'} mL</span>
                 </div>
-
-                <div className="metric">
-                  <span className="metric-label">💧 Estimated Water Usage:</span>
-                  <span className="metric-value">
-                    {irrigationResult.estimatedLiters.toFixed(2)} L
-                  </span>
-                </div>
-                <div className="metric">
-                  <span className="metric-label">📏 Calculated Area:</span>
-                  <span className="metric-value">10 m²</span>
+                <div className="stat-row">
+                  <span className="stat-label">Per Plant</span>
+                  <span className="stat-value">{irrigationResult.mlPerPlant?.toFixed(0) || '0'} mL</span>
                 </div>
               </div>
 
-              {/* Plant Health Status */}
-              <div className="result-card">
-                <h4>🏥 Plant Health Status</h4>
-                <div className="metric">
-                  <span className="metric-label">Health Score:</span>
-                  <span className="metric-value">
-                    {plantHealth.score.toFixed(1)}
-                    <small>/100</small>
-                  </span>
+              {/* Plant Health */}
+              <div className="info-card">
+                <h4 className="info-card-title">
+                  <span>🏥</span> Plant Health
+                </h4>
+                <div className="stat-row">
+                  <span className="stat-label">Health Score</span>
+                  <span className="stat-value">{plantHealth.score.toFixed(1)}/100</span>
                 </div>
-                <div className="metric">
-                  <span className="metric-label">Status:</span>
+                <div className="stat-row">
+                  <span className="stat-label">Status</span>
                   <span
                     className="status-badge"
-                    style={{ backgroundColor: getHealthColor(plantHealth.status) }}
+                    style={{
+                      background: getHealthColor(plantHealth.status),
+                      color: '#fff',
+                    }}
                   >
                     {plantHealth.status}
                   </span>
                 </div>
 
                 {plantHealth.issues.length > 0 && (
-                  <div className="health-issues">
-                    <strong>⚠️ Potential Health Concerns:</strong>
-                    <ul>
+                  <div className="alert-box" style={{ marginTop: '20px' }}>
+                    <div className="alert-title" style={{ color: '#ef4444' }}>
+                      ⚠️ Health Concerns
+                    </div>
+                    <ul className="alert-list">
                       {plantHealth.issues.map((issue: string, index: number) => (
                         <li key={index}>{issue}</li>
                       ))}
@@ -852,149 +883,101 @@ const SmartIrrigationSystem: React.FC = () => {
                 )}
               </div>
 
-              {/* Safety Analysis & General Recommendations */}
-              <div className="result-card">
-                <h4>🛡️ Safety Analysis</h4>
+              {/* Environmental Summary */}
+              <div className="info-card">
+                <h4 className="info-card-title">
+                  <span>🌍</span> Current Conditions
+                </h4>
+                <div className="stat-row">
+                  <span className="stat-label">Soil Moisture</span>
+                  <span className="stat-value">{soilMoisture}%</span>
+                </div>
+                <div className="stat-row">
+                  <span className="stat-label">Humidity</span>
+                  <span className="stat-value">{humidity}%</span>
+                </div>
+                <div className="stat-row">
+                  <span className="stat-label">Temperature</span>
+                  <span className="stat-value">{temperature}°C</span>
+                </div>
+                <div className="stat-row">
+                  <span className="stat-label">Rain Forecast</span>
+                  <span className="stat-value">{rainChance}%</span>
+                </div>
+                <div className="stat-row">
+                  <span className="stat-label">Crop Type</span>
+                  <span className="stat-value">{cropType.charAt(0).toUpperCase() + cropType.slice(1)}</span>
+                </div>
+              </div>
+
+              {/* Safety & Recommendations */}
+              <div className="info-card">
+                <h4 className="info-card-title">
+                  <span>🛡️</span> Safety Analysis
+                </h4>
                 <div
-                  className={`safety-message ${
+                  className={`alert-box ${
                     irrigationResult.safetyMessage.includes('✅')
-                      ? 'safe'
+                      ? 'success'
                       : irrigationResult.safetyMessage.includes('⚠️')
                       ? 'warning'
-                      : 'danger'
+                      : ''
                   }`}
+                  style={{ marginTop: 0 }}
                 >
-                  {irrigationResult.safetyMessage}
+                  <div
+                    className="alert-title"
+                    style={{
+                      color: irrigationResult.safetyMessage.includes('✅')
+                        ? '#10b981'
+                        : irrigationResult.safetyMessage.includes('⚠️')
+                        ? '#f59e0b'
+                        : '#ef4444',
+                    }}
+                  >
+                    {irrigationResult.safetyMessage}
+                  </div>
                 </div>
 
-                <div className="recommendations">
-                  <h5>
-                    <span role="img" aria-label="lightbulb">
-                      💡
-                    </span>{' '}
-                    General Recommendations:
-                  </h5>
-                  <ul>
+                <div className="alert-box warning" style={{ marginTop: '20px' }}>
+                  <div className="alert-title" style={{ color: '#f59e0b' }}>
+                    💡 Recommendations
+                  </div>
+                  <ul className="alert-list">
                     {soilMoisture > 80 && (
-                      <li>
-                        Consider improving drainage to prevent waterlogging, especially if soil
-                        moisture is consistently high.
-                      </li>
-                    )}
-                    {soilMoisture > 80 && (
-                      <li>
-                        Monitor closely for signs of root rot or fungal diseases, which thrive in
-                        overly wet conditions.
-                      </li>
+                      <>
+                        <li>Improve drainage to prevent waterlogging</li>
+                        <li>Monitor for root rot or fungal diseases</li>
+                      </>
                     )}
                     {soilMoisture < 25 && (
-                      <li>
-                        Verify irrigation system for proper water delivery and consistent coverage.
-                      </li>
-                    )}
-                    {soilMoisture < 25 && (
-                      <li>
-                        Apply mulch around plants to help retain soil moisture and reduce
-                        evaporation.
-                      </li>
+                      <>
+                        <li>Verify irrigation system delivery</li>
+                        <li>Apply mulch to retain moisture</li>
+                      </>
                     )}
                     {calculateRecentIrrigationScore(irrigationHistory) > 70 && (
-                      <li>
-                        Reduce irrigation frequency for the next 2-3 days to allow soil to dry out
-                        slightly.
-                      </li>
-                    )}
-                    {calculateRecentIrrigationScore(irrigationHistory) > 70 && (
-                      <li>
-                        Carefully observe plants for symptoms of over-watering, such as yellowing
-                        leaves or stunted growth.
-                      </li>
+                      <>
+                        <li>Reduce frequency for 2-3 days</li>
+                        <li>Watch for over-watering symptoms</li>
+                      </>
                     )}
                     {plantHealth.score < 60 && (
-                      <li>
-                        Inspect plants thoroughly for pests, diseases, or nutrient deficiencies
-                        causing stress.
-                      </li>
+                      <>
+                        <li>Inspect for pests and diseases</li>
+                        <li>Adjust schedule based on observation</li>
+                      </>
                     )}
-                    {plantHealth.score < 60 && (
-                      <li>
-                        Adjust irrigation schedule based on direct observation of plant response and
-                        soil conditions.
-                      </li>
+                    {irrigationResult.safetyMessage.includes('✅') && plantHealth.score >= 70 && (
+                      <li>Optimal conditions - maintain current plan</li>
                     )}
-                    {irrigationResult.safetyMessage.includes('✅') &&
-                      plantHealth.score >= 70 && (
-                        <li>
-                          Your plants appear to be in good health with an optimal irrigation plan.
-                          Keep monitoring!
-                        </li>
-                      )}
-                    {(irrigationResult.safetyMessage.includes('⚠️') ||
-                      irrigationResult.safetyMessage.includes('❌')) && (
-                      <li>
-                        Prioritize immediate action based on the specific warnings to prevent
-                        further plant stress or damage.
-                      </li>
-                    )}
-                    <li>
-                      Always cross-reference automated recommendations with physical inspection of
-                      your plants and soil.
-                    </li>
+                    <li>Cross-reference with physical inspection</li>
                   </ul>
                 </div>
               </div>
-
-              {/* Environmental Summary */}
-              <div className="result-card">
-                <h4>🌍 Current Environmental Summary</h4>
-                <div className="metric">
-                  <span className="metric-label">🌱 Soil Moisture:</span>
-                  <span className="metric-value">{soilMoisture}%</span>
-                </div>
-                <div className="metric">
-                  <span className="metric-label">💨 Humidity:</span>
-                  <span className="metric-value">{humidity}%</span>
-                </div>
-                <div className="metric">
-                  <span className="metric-label">🌡️ Temperature:</span>
-                  <span className="metric-value">{temperature}°C</span>
-                </div>
-                <div className="metric">
-                  <span className="metric-label">🌦️ Rain Forecast (24hr):</span>
-                  <span className="metric-value">{rainChance}%</span>
-                </div>
-                <div className="metric">
-                  <span className="metric-label">📊 Recent Irrigation Score:</span>
-                  <span className="metric-value">
-                    {calculateRecentIrrigationScore(irrigationHistory).toFixed(1)}%
-                  </span>
-                </div>
-                <div className="metric">
-                  <span className="metric-label">🌾 Crop Type:</span>
-                  <span className="metric-value">
-                    {cropType.charAt(0).toUpperCase() + cropType.slice(1)}
-                  </span>
-                </div>
-              </div>
             </div>
-          )}
-
-          <div
-            style={{
-              textAlign: 'center',
-              marginTop: '50px',
-              padding: '25px',
-              borderTop: '1px solid #ffffffff',
-              color: '#ffffffff',
-              fontSize: '0.9rem',
-            }}
-          >
-            <p>
-              Remember: It&apos;s often safer to underwater slightly than to overwater, as it&apos;s
-              easier to add water than to remove excess!
-            </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

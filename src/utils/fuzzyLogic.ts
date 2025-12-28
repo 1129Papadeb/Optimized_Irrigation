@@ -74,44 +74,55 @@ class FuzzyLogic {
     heavy: (x: number) => this.trimf(x, [60, 80, 100]),
   };
 
-  // Crop-specific per-plant water factors (mL)
-  static cropFactors: CropFactors = {
-    lettuce: {
-      seedlings:  { baseML: 50,  maxML: 100 },
-      vegetative: { baseML: 150, maxML: 250 },
-      flowering:  { baseML: 150, maxML: 250 }, // unused but required by type
-      mature:     { baseML: 300, maxML: 500 },
-    },
-    okra: {
-      seedlings:  { baseML: 200,  maxML: 500 },
-      vegetative: { baseML: 1000, maxML: 2000 },
-      flowering:  { baseML: 1500, maxML: 2000 },
-      mature:     { baseML: 1500, maxML: 2000 },
-    },
-    tomato: {
-      seedlings:  { baseML: 50,   maxML: 100 },
-      vegetative: { baseML: 300,  maxML: 500 },
-      flowering:  { baseML: 700,  maxML: 1000 },
-      mature:     { baseML: 1000, maxML: 1500 },
-    },
-  };
+// Crop-specific per-plant water factors (mL) – more realistic
+// Crop-specific per-plant water factors (mL) – tuned to realistic daily ranges
+static cropFactors: CropFactors = {
+  lettuce: {
+    // seedling: ~150–250 mL/day max
+    seedlings:  { baseML: 80,  maxML: 200 },
+    // vegetative: ~300–500 mL/day max
+    vegetative: { baseML: 150, maxML: 400 },
+    // flowering/heading similar to vegetative
+    flowering:  { baseML: 150, maxML: 400 },
+    // mature: ~500–800 mL/day max
+    mature:     { baseML: 250, maxML: 700 },
+  },
+  okra: {
+    // seedling: lower, just establishing
+    seedlings:  { baseML: 80,  maxML: 200 },
+    // vegetative: ~300–600 mL/event
+    vegetative: { baseML: 200, maxML: 500 },
+    // flowering/pod set: higher demand
+    flowering:  { baseML: 300, maxML: 700 },
+    mature:     { baseML: 300, maxML: 700 },
+  },
+  tomato: {
+    // seedling: small plants
+    seedlings:  { baseML: 100, maxML: 250 },
+    // vegetative: ~400–800 mL/day
+    vegetative: { baseML: 250, maxML: 700 },
+    // flowering/fruiting: can reach 1000–2000 mL/day
+    flowering:  { baseML: 400, maxML: 1200 },
+    mature:     { baseML: 500, maxML: 1500 },
+  },
+};
 
-  static getGrowthStage(days: number, crop: CropType): CropStage {
-    if (crop === 'lettuce') {
-      return days <= 21 ? 'seedlings' : days <= 35 ? 'vegetative' : 'mature';
-    }
-    if (crop === 'okra') {
-      return days <= 21 ? 'seedlings' : days <= 42 ? 'vegetative' : 'flowering';
-    }
-    // tomato
-    return days <= 21
-      ? 'seedlings'
-      : days <= 49
-      ? 'vegetative'
-      : days <= 63
-      ? 'flowering'
-      : 'mature';
+static getGrowthStage(days: number, crop: CropType): CropStage {
+  if (crop === 'lettuce') {
+    return days <= 21 ? 'seedlings' : days <= 35 ? 'vegetative' : 'mature';
   }
+  if (crop === 'okra') {
+    return days <= 21 ? 'seedlings' : days <= 42 ? 'vegetative' : 'flowering';
+  }
+  // tomato
+  return days <= 21
+    ? 'seedlings'
+    : days <= 49
+    ? 'vegetative'
+    : days <= 63
+    ? 'flowering'
+    : 'mature';
+}
 
   static getCropFactor(crop: CropType, stage: CropStage): CropFactor {
     return this.cropFactors[crop][stage];
